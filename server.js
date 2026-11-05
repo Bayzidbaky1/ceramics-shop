@@ -110,7 +110,10 @@ app.use((e, q, r, n) => {
   r.status(e.status || 500).json({ error: e.status ? e.message : 'Server error' });
 });
 
-init().then(() => {
+init().then(async () => {
+  // First start on an empty database: load the sample data from data/*.csv
+  const { rows: [{ n }] } = await pool.query('SELECT count(*)::int n FROM drops');
+  if (!n) await require('./import').run();
   setInterval(() => tx(releaseExpired).catch(console.error), 30000);
   app.listen(process.env.PORT || 3000, () => console.log('Shop running on port ' + (process.env.PORT || 3000)));
 }).catch(e => { console.error('Database setup failed:', e.message); process.exit(1); });

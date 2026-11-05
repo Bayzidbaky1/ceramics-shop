@@ -6,7 +6,7 @@ const rows = f => {
   const k = h.split(',');
   return r.map(l => Object.fromEntries(l.split(',').map((v, i) => [k[i], v.trim()])));
 };
-(async () => {
+async function run() {
   await init();
   for (const d of rows('drops'))
     await pool.query('INSERT INTO drops(name, starts_at) VALUES ($1, $2) ON CONFLICT (name) DO NOTHING', [d.name, d.starts_at]);
@@ -24,5 +24,6 @@ const rows = f => {
     await pool.query('INSERT INTO order_items(order_id, product_id, qty, price_cents) VALUES ($1, $2, $3, $4)', [id, pr.id, +o.qty, pr.price_cents]);
   }
   console.log('Import done');
-  await pool.end();
-})().catch(e => { console.error('Import failed:', e.message); process.exit(1); });
+}
+module.exports = { run };
+if (require.main === module) run().then(() => pool.end()).catch(e => { console.error('Import failed:', e.message); process.exit(1); });
