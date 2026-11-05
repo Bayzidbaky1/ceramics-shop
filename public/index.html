@@ -3,36 +3,65 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Clay and Thread Saturday Drops</title>
+<title>Clay and Thread: handmade ceramics and textiles, released every Saturday</title>
 <style>
-:root{--bg:#eceee8;--ink:#17202e;--muted:#5d6676;--cobalt:#1f4396;--line:#c3c9bf;--warn:#9a5b00}
+:root{--bg:#eef0ea;--panel:#dfe6dd;--ink:#162033;--muted:#586273;--cobalt:#1f4396;--line:#c5ccc1;--warn:#8a5200;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
-header{display:flex;gap:1.5rem;align-items:baseline;padding:1rem 1.5rem;border-bottom:2px solid var(--ink)}
-header a{color:var(--ink);text-decoration:none}
-header .brand{font:700 1.4rem/1 "Iowan Old Style",Palatino,Georgia,serif;margin-right:auto}
-header a:hover,header a:focus-visible{color:var(--cobalt);text-decoration:underline}
-main{max-width:60rem;margin:0 auto;padding:1.5rem}
-h2{font:700 1.8rem/1.2 "Iowan Old Style",Palatino,Georgia,serif;margin:2rem 0 .25rem}
-h3{font:600 1.1rem/1.3 "Iowan Old Style",Palatino,Georgia,serif;margin:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:inherit}
+header{display:flex;flex-wrap:wrap;gap:.75rem 1.75rem;align-items:baseline;padding:1rem clamp(1rem,4vw,3rem);border-bottom:2px solid var(--ink)}
+.brand{font:700 1.5rem/1 var(--serif);text-decoration:none;margin-right:auto}
+header nav{display:flex;gap:1.5rem}
+header nav a{text-decoration:none;padding:.25rem 0}
+header nav a:hover{text-decoration:underline;text-decoration-thickness:2px}
+main{max-width:70rem;margin:0 auto;padding:0 clamp(1rem,4vw,3rem) 4rem}
+h1,h2,h3{font-family:var(--serif);margin:0}
+h2{font-size:1.7rem;line-height:1.2;margin:3rem 0 .75rem}
+h3{font-size:1.1rem;line-height:1.3}
 .muted{color:var(--muted);margin:.1rem 0}
+.small{font-size:.9rem}
 .err{color:#a11;font-weight:600}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(13rem,1fr));gap:1.25rem;margin-top:1rem}
-.item .swatch{aspect-ratio:1;border-radius:50% 50% 8px 8px / 62% 62% 8px 8px;margin-bottom:.6rem}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:center;padding:clamp(2rem,6vw,4.5rem) 0 1rem}
+.hero h1{font-size:clamp(2.1rem,4.6vw,3.5rem);line-height:1.06;letter-spacing:-.01em}
+.lede{font-size:1.15rem;max-width:32rem;margin:1rem 0 1.5rem}
+.cd-label{margin:0;color:var(--muted)}
+.cd{font:700 clamp(1.9rem,4vw,2.8rem)/1.15 var(--serif);color:var(--cobalt);margin:.1rem 0;font-variant-numeric:tabular-nums}
+.shelf{background:var(--panel);padding:1.25rem 1.25rem .5rem}
+.shelf svg{display:block;width:100%;height:auto}
+.cal{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
+.cal li{display:grid;grid-template-columns:13rem 1fr auto auto;gap:1rem;padding:.8rem 0;border-bottom:1px solid var(--line);align-items:baseline}
+.cal .dn{font:600 1.1rem var(--serif)}
+.cal .st{font-weight:600;color:var(--muted)}
+.cal li.on .st{color:var(--cobalt)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(14.5rem,1fr));gap:1.75rem 1.5rem;margin-top:1.25rem}
+.art{display:block;background:var(--panel)}
+.art svg{display:block;width:100%;height:auto}
+.card .info{padding-top:.7rem}
+.card h3 a{text-decoration:none}
+.card h3 a:hover{text-decoration:underline}
+.row{display:flex;justify-content:space-between;align-items:baseline;margin:.35rem 0 .7rem}
 .low{color:var(--warn);font-weight:600}
-button{font:inherit;font-weight:600;background:var(--cobalt);color:#fff;border:0;padding:.55rem 1rem;cursor:pointer}
+.pdp{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,4vw,3.5rem);margin-top:1.5rem;align-items:start}
+.pdp h1{font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.1;margin:.2rem 0}
+.price{font:700 1.7rem var(--serif);margin:.75rem 0 .25rem}
+.desc{max-width:30rem;margin:1rem 0 1.25rem}
+button{font:inherit;font-weight:600;background:var(--cobalt);color:#fff;border:0;padding:.65rem 1.1rem;cursor:pointer}
+.card button{width:100%}
+button:hover:not(:disabled){background:#17337a}
 button:disabled{background:#9aa1ad;cursor:not-allowed}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e0a100;outline-offset:2px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e0a100;outline-offset:2px}
 table{border-collapse:collapse;width:100%;margin:.5rem 0 1rem}
-td,th{text-align:left;padding:.45rem .6rem;border-bottom:1px solid var(--line)}
-input,select{font:inherit;padding:.5rem;border:1px solid var(--ink);background:#fff;margin:0 .5rem .5rem 0}
+td,th{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line)}
+input,select{font:inherit;padding:.55rem;border:1px solid var(--ink);background:#fff;margin:0 .5rem .5rem 0}
 input[type=number]{width:5rem}
-@media (prefers-reduced-motion:no-preference){button{transition:background .15s}}
+#toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.7rem 1.2rem;display:none;z-index:9}
+@media (max-width:760px){.hero,.pdp{grid-template-columns:1fr}.cal li{grid-template-columns:1fr auto;gap:.1rem 1rem}.cal .date{grid-column:1/-1;color:var(--muted)}}
 </style>
 </head>
 <body>
-<header><a class="brand" href="#/">Clay and Thread</a><a href="#/">Drops</a><a href="#/cart">Cart (<span id="n">0</span>)</a><a href="#/admin">Admin</a></header>
+<header><a class="brand" href="#/">Clay and Thread</a><nav><a href="#/">Shop</a><a href="#/cart">Cart (<span id="n">0</span>)</a><a href="#/admin">Admin</a></nav></header>
 <main id="app"></main>
+<div id="toast" role="status"></div>
 <script>
 const $ = s => document.querySelector(s), app = $('#app');
 const cartId = localStorage.cartId || (localStorage.cartId = crypto.randomUUID());
@@ -40,7 +69,28 @@ const money = c => '$' + (c / 100).toFixed(2);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const live = d => new Date(d.starts_at) <= new Date();
 const hue = s => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7);
+const when = d => new Date(d.starts_at).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+const rel = d => { const s = (new Date(d.starts_at) - Date.now()) / 1000; if (s <= 0) return 'Open now'; const n = Math.floor(s / 86400); return n > 0 ? `Opens in ${n} day${n > 1 ? 's' : ''}` : 'Opens today'; };
 let timer;
+
+/* Product illustrations are drawn in code, so every piece gets an image without photo files. */
+const GL = { celadon: ['#6f9f93', '#d9e8e2'], indigo: ['#2c4486', '#d9dff0'], ash: ['#8d8f8a', '#e4e3de'], oat: ['#b79f7c', '#efe6d6'], rust: ['#8f4a2e', '#ecd9cc'], sage: ['#7d9774', '#e0e8da'] };
+const glaze = n => /celadon|tea/i.test(n) ? GL.celadon : /indigo/i.test(n) ? GL.indigo : /ash/i.test(n) ? GL.ash : /speckle|linen|oat/i.test(n) ? GL.oat : Object.values(GL)[hue(n) % 6];
+const kind = n => /mug|cup/i.test(n) ? 'mug' : /vase|jar|pot/i.test(n) ? 'vase' : /runner|napkin|linen|towel|scarf|textile|cloth|throw/i.test(n) ? 'cloth' : 'bowl';
+const SH = 'rgba(22,32,51,.16)';
+const shape = (k, c, t) => ({
+  bowl: `<ellipse cx="100" cy="172" rx="62" ry="7" fill="${SH}"/><path d="M32 88Q36 164 100 164Q164 164 168 88Z" fill="${c}"/><ellipse cx="100" cy="88" rx="68" ry="13" fill="${t}"/><ellipse cx="100" cy="90" rx="58" ry="9" fill="${c}" opacity=".55"/><rect x="78" y="162" width="44" height="9" rx="2" fill="${c}"/><path d="M44 108Q50 150 78 158" stroke="${t}" stroke-width="5" fill="none" opacity=".45" stroke-linecap="round"/>`,
+  mug: `<ellipse cx="96" cy="172" rx="52" ry="6" fill="${SH}"/><path d="M140 90h8q24 0 24 28q0 28-24 28h-8" fill="none" stroke="${c}" stroke-width="11"/><rect x="52" y="62" width="88" height="106" rx="12" fill="${c}"/><ellipse cx="96" cy="62" rx="44" ry="9" fill="${t}"/><ellipse cx="96" cy="63" rx="36" ry="6" fill="${c}" opacity=".5"/><rect x="64" y="82" width="8" height="70" rx="4" fill="${t}" opacity=".4"/>`,
+  vase: `<ellipse cx="100" cy="173" rx="52" ry="6" fill="${SH}"/><path d="M86 34H114C114 66 152 78 152 122C152 156 128 170 100 170C72 170 48 156 48 122C48 78 86 66 86 34Z" fill="${c}"/><ellipse cx="100" cy="34" rx="14" ry="5" fill="${t}"/><path d="M66 108Q62 140 80 156" stroke="${t}" stroke-width="6" fill="none" opacity=".45" stroke-linecap="round"/><path d="M58 120Q100 134 142 120" stroke="${t}" stroke-width="2.5" fill="none" opacity=".6"/>`,
+  cloth: `<ellipse cx="100" cy="172" rx="70" ry="6" fill="${SH}"/><rect x="34" y="128" width="132" height="36" rx="3" fill="${c}"/><rect x="40" y="96" width="120" height="36" rx="3" fill="${t}" stroke="${c}" stroke-width="2"/><rect x="46" y="66" width="108" height="34" rx="3" fill="${c}" opacity=".85"/><path d="M34 140h132M34 150h132" stroke="${t}" stroke-width="3" opacity=".8"/><path d="M40 108h120M40 118h120" stroke="${c}" stroke-width="3" opacity=".6"/><path d="M46 76h108M46 86h108" stroke="${t}" stroke-width="3" opacity=".7"/>`
+})[k];
+const art = n => { const [c, t] = glaze(n); return `<svg viewBox="0 0 200 200" role="img" aria-label="Illustration of ${esc(n)}"><rect width="200" height="200" fill="${t}"/>${shape(kind(n), c, t)}</svg>`; };
+const hero = () => `<svg viewBox="0 0 520 200" role="img" aria-label="A vase, a bowl and a mug on a shelf">
+  <g>${shape('vase', ...GL.indigo)}</g><g transform="translate(165 0)">${shape('bowl', ...GL.celadon)}</g><g transform="translate(330 0)">${shape('mug', ...GL.oat)}</g>
+  <rect x="0" y="168" width="520" height="5" fill="#162033"/></svg>`;
+const blurb = n => ({ bowl: 'Wheel-thrown by hand and glazed in a small batch, so no two pieces match exactly.', mug: 'Thrown by hand with a generous handle and a glaze that pools where the clay curves.', vase: 'A hand-built vessel with a kiln-fired glaze, made to stand alone or hold a few stems.', cloth: 'Woven and finished by hand from natural fibre. It softens with every wash.' })[kind(n)];
+const stockTag = p => p.stock === 0 ? '<span class="muted">Sold out</span>' : p.stock <= 3 ? `<span class="low">Only ${p.stock} left</span>` : `<span class="muted">${p.stock} left</span>`;
+const toast = m => { const t = $('#toast'); t.textContent = m; t.style.display = 'block'; clearTimeout(toast.h); toast.h = setTimeout(() => t.style.display = 'none', 2500); };
 
 async function api(path, o = {}) {
   const r = await fetch('/api' + path, { ...o, headers: { 'Content-Type': 'application/json', 'x-admin-key': sessionStorage.k || '' }, body: o.body && JSON.stringify(o.body) });
@@ -49,21 +99,53 @@ async function api(path, o = {}) {
   return j;
 }
 
+const card = (p, d) => `<article class="card"><a class="art" href="#/product/${p.id}" aria-label="View ${esc(p.name)}">${art(p.name)}</a><div class="info">
+  <h3><a href="#/product/${p.id}">${esc(p.name)}</a></h3><p class="muted">by ${esc(p.artisan)}</p>
+  <div class="row"><b>${money(p.price_cents)}</b>${stockTag(p)}</div>
+  <button data-add="${p.id}" ${live(d) && p.stock > 0 ? '' : 'disabled'}>${p.stock === 0 ? 'Sold out' : live(d) ? 'Add to cart' : 'Not open yet'}</button></div></article>`;
+
+function countdown() {
+  const el = $('#cd'); if (!el) return;
+  const go = () => {
+    const s = Math.max(0, Math.floor((new Date(el.dataset.t) - Date.now()) / 1000));
+    if (!s) { clearInterval(timer); route(); return; }
+    const p = n => String(n).padStart(2, '0');
+    el.textContent = `${Math.floor(s / 86400)}d ${p(Math.floor(s % 86400 / 3600))}h ${p(Math.floor(s % 3600 / 60))}m ${p(s % 60)}s`;
+  };
+  go(); timer = setInterval(go, 1000);
+}
+
 async function home() {
   const drops = await api('/drops');
-  app.innerHTML = drops.map(d => `<section><h2>${esc(d.name)}</h2>
-    <p class="muted">${live(d) ? 'Open now' : 'Opens ' + new Date(d.starts_at).toLocaleString()}</p>
-    <div class="grid">${d.products.map(p => `<div class="item">
-      <div class="swatch" style="background:hsl(${hue(p.name)} 38% 62%)"></div>
-      <h3>${esc(p.name)}</h3><p class="muted">by ${esc(p.artisan)}</p>
-      <p><b>${money(p.price_cents)}</b> ${p.stock === 0 ? 'Sold out' : p.stock <= 3 ? `<span class="low">Only ${p.stock} left</span>` : p.stock + ' left'}</p>
-      <button data-add="${p.id}" ${live(d) && p.stock > 0 ? '' : 'disabled'}>${p.stock > 0 ? 'Add to cart' : 'Sold out'}</button></div>`).join('')}</div></section>`).join('') || '<p>No drops yet. Run the import to add some.</p>';
+  const next = drops.filter(d => !live(d)).sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at))[0];
+  app.innerHTML = `<section class="hero"><div>
+      <h1>Handmade ceramics and textiles, every Saturday at 7 pm</h1>
+      <p class="lede">Small batches from our artisans. When a piece is gone, it is gone.</p>
+      ${next ? `<p class="cd-label">${esc(next.name)} opens in</p><p class="cd" id="cd" data-t="${next.starts_at}"></p>` : '<p class="cd-label">A drop is open now. Choose your pieces below.</p>'}
+    </div><div class="shelf">${hero()}</div></section>
+    <h2>Drop calendar</h2>
+    <ol class="cal">${[...drops].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)).map(d => `<li class="${live(d) ? 'on' : ''}"><span class="date">${when(d)}</span><span class="dn">${esc(d.name)}</span><span class="st">${rel(d)}</span><span class="muted">${d.products.length} pieces</span></li>`).join('')}</ol>
+    ${drops.map(d => `<section><h2>${esc(d.name)}</h2><p class="muted">${live(d) ? 'Open now' : 'Opens ' + when(d)}</p><div class="grid">${d.products.map(p => card(p, d)).join('')}</div></section>`).join('') || '<p>No drops yet. Run the import to add some.</p>'}`;
+  countdown();
+}
+
+async function product(id) {
+  const drops = await api('/drops');
+  const d = drops.find(x => x.products.some(p => p.id == id));
+  if (!d) { app.innerHTML = '<p class="err">We could not find that piece.</p><p><a href="#/">Back to the drops</a></p>'; return; }
+  const p = d.products.find(x => x.id == id);
+  app.innerHTML = `<p style="margin-top:1.5rem"><a href="#/">Back to the drops</a></p><div class="pdp">
+    <div class="art">${art(p.name)}</div>
+    <div><p class="muted">${esc(d.name)}</p><h1>${esc(p.name)}</h1><p class="muted">Made by ${esc(p.artisan)}</p>
+    <p class="price">${money(p.price_cents)}</p><p>${stockTag(p)}</p>
+    <p class="desc">${blurb(p.name)}</p>
+    <button data-add="${p.id}" ${live(d) && p.stock > 0 ? '' : 'disabled'}>${p.stock === 0 ? 'Sold out' : live(d) ? 'Add to cart' : 'Opens ' + when(d)}</button>
+    <p class="muted small">Items stay in your cart for 10 minutes.</p></div></div>`;
 }
 
 async function cart() {
   const c = await api('/cart/' + cartId);
-  clearInterval(timer);
-  if (!c.items.length) { app.innerHTML = '<h2>Your cart</h2><p>Your cart is empty. Items you add are held for 10 minutes.</p>'; return; }
+  if (!c.items.length) { app.innerHTML = '<h2>Your cart</h2><p>Your cart is empty. Items you add are held for 10 minutes.</p><p><a href="#/">Browse the drops</a></p>'; return; }
   app.innerHTML = `<h2>Your cart</h2><p class="muted">Held for you: <b id="t"></b></p>
     <table><tr><th>Item<th>Qty<th>Price</tr>${c.items.map(i => `<tr><td>${esc(i.name)}<td>${i.qty}<td>${money(i.price_cents * i.qty)}</tr>`).join('')}</table>
     <p><b>Total ${money(c.total_cents)}</b></p>
@@ -97,7 +179,7 @@ async function admin() {
     <h2>Recent orders</h2><table><tr><th>Order<th>Customer<th>Total<th>Status</tr>${s.orders.map(o => `<tr><td>#${o.id}<td>${esc(o.email)}<td>${money(o.total_cents)}<td><select data-status="${o.id}" aria-label="Status for order ${o.id}">${['confirmed', 'packed', 'shipped'].map(x => `<option ${x === o.status ? 'selected' : ''}>${x}`).join('')}</select></tr>`).join('')}</table>`;
 }
 
-const routes = { '': home, cart, order, admin };
+const routes = { '': home, product, cart, order, admin };
 async function route() {
   const [, p = '', arg] = location.hash.split('/');
   clearInterval(timer);
@@ -105,12 +187,13 @@ async function route() {
   catch (e) { if (/admin key/.test(e.message)) delete sessionStorage.k; app.innerHTML = `<p class="err">${esc(e.message)}</p>`; }
   api('/cart/' + cartId).then(c => $('#n').textContent = c.items.reduce((n, i) => n + i.qty, 0)).catch(() => {});
 }
-addEventListener('hashchange', route);
+addEventListener('hashchange', () => { route(); scrollTo(0, 0); });
 route();
 
 document.addEventListener('click', async e => {
   const id = e.target.dataset.add; if (!id) return;
-  try { await api(`/cart/${cartId}/add`, { method: 'POST', body: { productId: +id } }); } catch (err) { alert(err.message); }
+  try { await api(`/cart/${cartId}/add`, { method: 'POST', body: { productId: +id } }); toast('Added to your cart. We hold it for 10 minutes.'); }
+  catch (err) { toast(err.message); }
   route();
 });
 document.addEventListener('change', async e => {
