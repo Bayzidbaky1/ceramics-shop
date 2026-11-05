@@ -1,0 +1,25 @@
+databases:
+  - name: ceramics-db
+    plan: free
+    databaseName: ceramics
+    user: ceramics
+
+services:
+  - type: web
+    name: ceramics-shop
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ceramics-db
+          property: connectionString
+      - key: ADMIN_KEY
+        generateValue: true
+      - key: MONTHLY_COST_USD
+        value: "86"
+      - key: DROPS_PER_MONTH
+        value: "4"
