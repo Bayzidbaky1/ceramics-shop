@@ -111,6 +111,10 @@ app.use((e, q, r, n) => {
 });
 
 init().then(async () => {
+  if (process.env.RESET_DATA === '1') {
+    console.log('RESET_DATA=1: clearing shop data');
+    await pool.query('TRUNCATE order_items, orders, holds, products, drops, customers RESTART IDENTITY CASCADE');
+  }
   // First start on an empty database: load the sample data from data/*.csv
   const { rows: [{ n }] } = await pool.query('SELECT count(*)::int n FROM drops');
   if (!n) await require('./import').run();

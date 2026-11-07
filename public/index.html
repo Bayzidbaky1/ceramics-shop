@@ -3,93 +3,106 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Clay and Thread: handmade ceramics and textiles, released every Saturday</title>
+<title>Drop Store: limited launches, one at a time</title>
 <style>
-:root{--bg:#eef0ea;--panel:#dfe6dd;--ink:#162033;--muted:#586273;--cobalt:#1f4396;--line:#c5ccc1;--warn:#8a5200;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
+:root{--alt:#f5f5f7;--ink:#1d1d1f;--mute:#6e6e73;--blue:#0071e3;--link:#0066cc;--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+body{margin:0;background:#fff;color:var(--ink);font:17px/1.47 var(--font);letter-spacing:-.022em;-webkit-font-smoothing:antialiased}
 a{color:inherit}
-header{display:flex;flex-wrap:wrap;gap:.75rem 1.75rem;align-items:baseline;padding:1rem clamp(1rem,4vw,3rem);border-bottom:2px solid var(--ink)}
-.brand{font:700 1.5rem/1 var(--serif);text-decoration:none;margin-right:auto}
-header nav{display:flex;gap:1.5rem}
-header nav a{text-decoration:none;padding:.25rem 0}
-header nav a:hover{text-decoration:underline;text-decoration-thickness:2px}
-main{max-width:70rem;margin:0 auto;padding:0 clamp(1rem,4vw,3rem) 4rem}
-h1,h2,h3{font-family:var(--serif);margin:0}
-h2{font-size:1.7rem;line-height:1.2;margin:3rem 0 .75rem}
-h3{font-size:1.1rem;line-height:1.3}
-.muted{color:var(--muted);margin:.1rem 0}
-.small{font-size:.9rem}
-.err{color:#a11;font-weight:600}
-.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:center;padding:clamp(2rem,6vw,4.5rem) 0 1rem}
-.hero h1{font-size:clamp(2.1rem,4.6vw,3.5rem);line-height:1.06;letter-spacing:-.01em}
-.lede{font-size:1.15rem;max-width:32rem;margin:1rem 0 1.5rem}
-.cd-label{margin:0;color:var(--muted)}
-.cd{font:700 clamp(1.9rem,4vw,2.8rem)/1.15 var(--serif);color:var(--cobalt);margin:.1rem 0;font-variant-numeric:tabular-nums}
-.shelf{background:var(--panel);padding:1.25rem 1.25rem .5rem}
-.shelf svg{display:block;width:100%;height:auto}
-.cal{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
-.cal li{display:grid;grid-template-columns:13rem 1fr auto auto;gap:1rem;padding:.8rem 0;border-bottom:1px solid var(--line);align-items:baseline}
-.cal .dn{font:600 1.1rem var(--serif)}
-.cal .st{font-weight:600;color:var(--muted)}
-.cal li.on .st{color:var(--cobalt)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(14.5rem,1fr));gap:1.75rem 1.5rem;margin-top:1.25rem}
-.art{display:block;background:var(--panel)}
-.art svg{display:block;width:100%;height:auto}
-.card .info{padding-top:.7rem}
-.card h3 a{text-decoration:none}
-.card h3 a:hover{text-decoration:underline}
-.row{display:flex;justify-content:space-between;align-items:baseline;margin:.35rem 0 .7rem}
-.low{color:var(--warn);font-weight:600}
-.pdp{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,4vw,3.5rem);margin-top:1.5rem;align-items:start}
-.pdp h1{font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.1;margin:.2rem 0}
-.price{font:700 1.7rem var(--serif);margin:.75rem 0 .25rem}
-.desc{max-width:30rem;margin:1rem 0 1.25rem}
-button{font:inherit;font-weight:600;background:var(--cobalt);color:#fff;border:0;padding:.65rem 1.1rem;cursor:pointer}
-.card button{width:100%}
-button:hover:not(:disabled){background:#17337a}
-button:disabled{background:#9aa1ad;cursor:not-allowed}
-a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e0a100;outline-offset:2px}
-table{border-collapse:collapse;width:100%;margin:.5rem 0 1rem}
-td,th{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line)}
-input,select{font:inherit;padding:.55rem;border:1px solid var(--ink);background:#fff;margin:0 .5rem .5rem 0}
-input[type=number]{width:5rem}
-#toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.7rem 1.2rem;display:none;z-index:9}
-@media (max-width:760px){.hero,.pdp{grid-template-columns:1fr}.cal li{grid-template-columns:1fr auto;gap:.1rem 1rem}.cal .date{grid-column:1/-1;color:var(--muted)}}
+nav{position:sticky;top:0;z-index:5;height:48px;display:flex;align-items:center;gap:clamp(1rem,3vw,2.2rem);padding:0 clamp(1rem,4vw,3rem);background:rgba(255,255,255,.82);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.1);font-size:13px}
+nav .brand{font-weight:600;font-size:15px;text-decoration:none;margin-right:auto}
+nav a{text-decoration:none;opacity:.88}
+nav a:hover{opacity:1;text-decoration:underline}
+main{min-height:70vh}
+.strip{background:var(--alt);text-align:center;padding:.8rem 1rem;font-size:15px}
+.strip b{color:var(--blue);font-variant-numeric:tabular-nums}
+.tile{text-align:center;padding:clamp(2.2rem,5vw,3.6rem) 1rem 0;overflow:hidden;background:var(--alt);margin-bottom:12px}
+.tile.w{background:#fff}
+.tile h2{margin:0;font-size:clamp(2rem,5vw,3.5rem);line-height:1.07;font-weight:600;letter-spacing:-.015em}
+.tag{margin:.35rem 0 0;font-size:clamp(1.05rem,2vw,1.5rem);line-height:1.2}
+.from{margin:.35rem 0 0;font-size:15px;opacity:.75}
+.cta{display:flex;gap:1.2rem;justify-content:center;align-items:center;flex-wrap:wrap;margin:1.1rem 0 0}
+.lnk{color:var(--link);text-decoration:none;font-size:17px}
+.lnk:hover{text-decoration:underline}
+.btn{display:inline-block;font:inherit;font-size:17px;letter-spacing:inherit;background:var(--blue);color:#fff;border:0;border-radius:980px;padding:.45rem 1.15rem;cursor:pointer;text-decoration:none}
+.btn:hover{background:#0077ed}
+.btn.off{background:transparent;color:var(--mute);border:1px solid currentColor;cursor:default;padding:.4rem 1.1rem}
+.btn:disabled{background:#c7c7cc;cursor:not-allowed}
+.stage{display:block;margin:1.5rem auto 0}
+.stage svg,.stage img{display:block;width:min(100%,560px);height:auto;margin:0 auto}
+.stage img,.box img{mix-blend-mode:multiply}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.duo .tile{margin:0;min-height:30rem}
+.duo .stage svg,.duo .stage img{width:min(100%,460px)}
+.box img{display:block;width:100%;height:auto}
+h2.sec{font-size:clamp(1.7rem,3.5vw,2.5rem);font-weight:600;letter-spacing:-.015em;margin:0 0 1rem}
+.cal{max-width:56rem;margin:0 auto;padding:clamp(2.5rem,6vw,4.5rem) 1.25rem}
+.cal ol{list-style:none;margin:0;padding:0}
+.cal li{display:grid;grid-template-columns:1fr auto auto;gap:1.5rem;padding:1rem 0;border-top:1px solid #d2d2d7;align-items:baseline}
+.cal li:last-child{border-bottom:1px solid #d2d2d7}
+.cal .dn{font-size:1.25rem;font-weight:600}
+.mute{color:var(--mute)}
+.on-t{color:var(--blue);font-weight:600}
+footer{background:var(--alt);color:var(--mute);font-size:12px;line-height:1.5;padding:1.2rem clamp(1rem,4vw,3rem) 2rem}
+.page{max-width:60rem;margin:0 auto;padding:1.5rem 1.25rem 4rem}
+.pdp{display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:center;margin-top:1rem}
+.pdp .box{background:var(--alt);border-radius:20px;padding:1.5rem}
+.pdp h1{font-size:clamp(2rem,4vw,3rem);line-height:1.08;font-weight:600;letter-spacing:-.015em;margin:.3rem 0}
+.price{font-size:1.4rem;font-weight:600;margin:.8rem 0 .2rem}
+.low{color:#b64400;font-weight:600}
+table{border-collapse:collapse;width:100%;margin:.5rem 0 1.5rem}
+td,th{text-align:left;padding:.6rem .5rem;border-bottom:1px solid #d2d2d7}
+input,select{font:inherit;font-size:16px;padding:.6rem .8rem;border:1px solid #86868b;border-radius:10px;background:#fff;margin:0 .5rem .5rem 0}
+input[type=number]{width:5.5rem}
+.err{color:#d70015;font-weight:600}
+#toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);background:#1d1d1f;color:#fff;padding:.7rem 1.3rem;border-radius:980px;display:none;z-index:9;font-size:15px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #0071e3;outline-offset:3px}
+@media (max-width:800px){.duo,.pdp{grid-template-columns:1fr}.duo .tile{min-height:0}.cal li{grid-template-columns:1fr auto}.cal li .mute:last-child{display:none}}
 </style>
 </head>
 <body>
-<header><a class="brand" href="#/">Clay and Thread</a><nav><a href="#/">Shop</a><a href="#/cart">Cart (<span id="n">0</span>)</a><a href="#/admin">Admin</a></nav></header>
+<nav><a class="brand" href="#/">Drop Store</a><a href="#/">Store</a><a href="#/cart">Bag (<span id="n">0</span>)</a><a href="#/admin">Admin</a></nav>
 <main id="app"></main>
+<footer>Demo project for a cloud computing course. Not affiliated with or endorsed by Apple Inc. Product names belong to their owners. Prices and descriptions are placeholders, and the product images are illustrations drawn in code.</footer>
 <div id="toast" role="status"></div>
 <script>
 const $ = s => document.querySelector(s), app = $('#app');
 const cartId = localStorage.cartId || (localStorage.cartId = crypto.randomUUID());
-const money = c => '$' + (c / 100).toFixed(2);
+const money = c => '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const live = d => new Date(d.starts_at) <= new Date();
-const hue = s => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7);
-const when = d => new Date(d.starts_at).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-const rel = d => { const s = (new Date(d.starts_at) - Date.now()) / 1000; if (s <= 0) return 'Open now'; const n = Math.floor(s / 86400); return n > 0 ? `Opens in ${n} day${n > 1 ? 's' : ''}` : 'Opens today'; };
-let timer;
+const dshort = d => new Date(d.starts_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+const dlong = d => new Date(d.starts_at).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+let timer, uid = 0;
 
-/* Product illustrations are drawn in code, so every piece gets an image without photo files. */
-const GL = { celadon: ['#6f9f93', '#d9e8e2'], indigo: ['#2c4486', '#d9dff0'], ash: ['#8d8f8a', '#e4e3de'], oat: ['#b79f7c', '#efe6d6'], rust: ['#8f4a2e', '#ecd9cc'], sage: ['#7d9774', '#e0e8da'] };
-const glaze = n => /celadon|tea/i.test(n) ? GL.celadon : /indigo/i.test(n) ? GL.indigo : /ash/i.test(n) ? GL.ash : /speckle|linen|oat/i.test(n) ? GL.oat : Object.values(GL)[hue(n) % 6];
-const kind = n => /mug|cup/i.test(n) ? 'mug' : /vase|jar|pot/i.test(n) ? 'vase' : /runner|napkin|linen|towel|scarf|textile|cloth|throw/i.test(n) ? 'cloth' : 'bowl';
-const SH = 'rgba(22,32,51,.16)';
-const shape = (k, c, t) => ({
-  bowl: `<ellipse cx="100" cy="172" rx="62" ry="7" fill="${SH}"/><path d="M32 88Q36 164 100 164Q164 164 168 88Z" fill="${c}"/><ellipse cx="100" cy="88" rx="68" ry="13" fill="${t}"/><ellipse cx="100" cy="90" rx="58" ry="9" fill="${c}" opacity=".55"/><rect x="78" y="162" width="44" height="9" rx="2" fill="${c}"/><path d="M44 108Q50 150 78 158" stroke="${t}" stroke-width="5" fill="none" opacity=".45" stroke-linecap="round"/>`,
-  mug: `<ellipse cx="96" cy="172" rx="52" ry="6" fill="${SH}"/><path d="M140 90h8q24 0 24 28q0 28-24 28h-8" fill="none" stroke="${c}" stroke-width="11"/><rect x="52" y="62" width="88" height="106" rx="12" fill="${c}"/><ellipse cx="96" cy="62" rx="44" ry="9" fill="${t}"/><ellipse cx="96" cy="63" rx="36" ry="6" fill="${c}" opacity=".5"/><rect x="64" y="82" width="8" height="70" rx="4" fill="${t}" opacity=".4"/>`,
-  vase: `<ellipse cx="100" cy="173" rx="52" ry="6" fill="${SH}"/><path d="M86 34H114C114 66 152 78 152 122C152 156 128 170 100 170C72 170 48 156 48 122C48 78 86 66 86 34Z" fill="${c}"/><ellipse cx="100" cy="34" rx="14" ry="5" fill="${t}"/><path d="M66 108Q62 140 80 156" stroke="${t}" stroke-width="6" fill="none" opacity=".45" stroke-linecap="round"/><path d="M58 120Q100 134 142 120" stroke="${t}" stroke-width="2.5" fill="none" opacity=".6"/>`,
-  cloth: `<ellipse cx="100" cy="172" rx="70" ry="6" fill="${SH}"/><rect x="34" y="128" width="132" height="36" rx="3" fill="${c}"/><rect x="40" y="96" width="120" height="36" rx="3" fill="${t}" stroke="${c}" stroke-width="2"/><rect x="46" y="66" width="108" height="34" rx="3" fill="${c}" opacity=".85"/><path d="M34 140h132M34 150h132" stroke="${t}" stroke-width="3" opacity=".8"/><path d="M40 108h120M40 118h120" stroke="${c}" stroke-width="3" opacity=".6"/><path d="M46 76h108M46 86h108" stroke="${t}" stroke-width="3" opacity=".7"/>`
+/* Device illustrations are drawn in code: no photo files, no logos. */
+const PAL = { 'iphone 18': ['#a8485c', '#6e2434', '#ff6b8a'], duo: ['#eceef3', '#b9bcc7', '#5b8cff'], macbook: ['#4a4a50', '#232326', '#8a6bff'], ipad: ['#f3f3f6', '#cfd0d6', '#18c1c1'], watch: ['#8a7660', '#5a4a3a', '#7f8a4a'], airpods: ['#ffffff', '#e6e6ea', '#9aa0b4'], imac: ['#78a3f5', '#3f6fd0', '#ffcf5a'], homepod: ['#3d414d', '#16181f', '#5ac8ff'] };
+const pal = n => { n = n.toLowerCase(); const k = Object.keys(PAL).find(k => n.includes(k)); return PAL[k] || ['#e8e8ed', '#b9bcc7', '#5b8cff']; };
+const kind = n => /duo/i.test(n) ? 'duo' : /iphone/i.test(n) ? 'phone' : /macbook/i.test(n) ? 'laptop' : /ipad/i.test(n) ? 'tablet' : /watch/i.test(n) ? 'watch' : /airpods/i.test(n) ? 'buds' : /imac/i.test(n) ? 'desk' : /homepod/i.test(n) ? 'speaker' : 'phone';
+const shape = (k, B, S, A) => ({
+  phone: `<rect x="152" y="18" width="96" height="256" rx="24" fill="${B}"/><rect x="158" y="24" width="84" height="244" rx="19" fill="${S}"/><rect x="186" y="32" width="28" height="9" rx="4.5" fill="#000"/><ellipse cx="200" cy="286" rx="50" ry="5" fill="rgba(0,0,0,.25)"/>`,
+  duo: `<rect x="66" y="52" width="130" height="196" rx="18" fill="${B}"/><rect x="204" y="52" width="130" height="196" rx="18" fill="${B}"/><rect x="72" y="58" width="118" height="184" rx="13" fill="${S}"/><rect x="210" y="58" width="118" height="184" rx="13" fill="${S}"/><ellipse cx="200" cy="262" rx="130" ry="6" fill="rgba(0,0,0,.25)"/>`,
+  laptop: `<rect x="84" y="36" width="232" height="156" rx="11" fill="${B}"/><rect x="91" y="43" width="218" height="140" rx="5" fill="${S}"/><path d="M52 194H348L358 210Q358 218 350 218H50Q42 218 42 210Z" fill="${B}"/><rect x="172" y="194" width="56" height="5" rx="2.5" fill="rgba(0,0,0,.28)"/><ellipse cx="200" cy="228" rx="150" ry="5" fill="rgba(0,0,0,.2)"/>`,
+  tablet: `<rect x="64" y="44" width="272" height="200" rx="22" fill="${B}"/><rect x="73" y="53" width="254" height="182" rx="13" fill="${S}"/><circle cx="200" cy="48.5" r="2" fill="#000" opacity=".5"/><ellipse cx="200" cy="256" rx="130" ry="6" fill="rgba(0,0,0,.22)"/>`,
+  watch: `<rect x="164" y="6" width="72" height="96" rx="16" fill="${A}"/><rect x="164" y="198" width="72" height="96" rx="16" fill="${A}"/><rect x="142" y="84" width="116" height="132" rx="34" fill="${B}"/><rect x="151" y="93" width="98" height="114" rx="27" fill="#050507"/><circle cx="200" cy="150" r="34" fill="none" stroke="#ff375f" stroke-width="8" stroke-dasharray="150 64" stroke-linecap="round"/><circle cx="200" cy="150" r="21" fill="none" stroke="#a3f33c" stroke-width="8" stroke-dasharray="90 42" stroke-linecap="round"/><rect x="258" y="120" width="8" height="24" rx="3" fill="${B}"/>`,
+  buds: `<g stroke="rgba(0,0,0,.14)" stroke-width="1.5" fill="${B}"><rect x="128" y="160" width="144" height="104" rx="44"/><ellipse cx="166" cy="82" rx="25" ry="30"/><rect x="178" y="96" width="12" height="62" rx="6"/><ellipse cx="234" cy="82" rx="25" ry="30"/><rect x="210" y="96" width="12" height="62" rx="6"/></g><path d="M128 206H272" stroke="rgba(0,0,0,.14)" stroke-width="2"/><ellipse cx="200" cy="276" rx="90" ry="6" fill="rgba(0,0,0,.2)"/>`,
+  desk: `<rect x="78" y="26" width="244" height="186" rx="12" fill="${B}"/><rect x="88" y="36" width="224" height="140" rx="4" fill="${S}"/><path d="M184 212H216L224 258H176Z" fill="#c7c8cd"/><ellipse cx="200" cy="262" rx="62" ry="7" fill="#b4b5ba"/>`,
+  speaker: `<path d="M116 214C116 120 150 76 200 76C250 76 284 120 284 214Z" fill="${B}"/><ellipse cx="200" cy="82" rx="30" ry="8" fill="${A}" opacity=".85"/><g stroke="rgba(255,255,255,.12)" stroke-width="2"><path d="M124 150H276M121 170H279M119 190H281"/></g><ellipse cx="200" cy="224" rx="90" ry="7" fill="rgba(0,0,0,.25)"/>`
 })[k];
-const art = n => { const [c, t] = glaze(n); return `<svg viewBox="0 0 200 200" role="img" aria-label="Illustration of ${esc(n)}"><rect width="200" height="200" fill="${t}"/>${shape(kind(n), c, t)}</svg>`; };
-const hero = () => `<svg viewBox="0 0 520 200" role="img" aria-label="A vase, a bowl and a mug on a shelf">
-  <g>${shape('vase', ...GL.indigo)}</g><g transform="translate(165 0)">${shape('bowl', ...GL.celadon)}</g><g transform="translate(330 0)">${shape('mug', ...GL.oat)}</g>
-  <rect x="0" y="168" width="520" height="5" fill="#162033"/></svg>`;
-const blurb = n => ({ bowl: 'Wheel-thrown by hand and glazed in a small batch, so no two pieces match exactly.', mug: 'Thrown by hand with a generous handle and a glaze that pools where the clay curves.', vase: 'A hand-built vessel with a kiln-fired glaze, made to stand alone or hold a few stems.', cloth: 'Woven and finished by hand from natural fibre. It softens with every wash.' })[kind(n)];
-const stockTag = p => p.stock === 0 ? '<span class="muted">Sold out</span>' : p.stock <= 3 ? `<span class="low">Only ${p.stock} left</span>` : `<span class="muted">${p.stock} left</span>`;
+const art = n => {
+  const [l, b, a] = pal(n), u = ++uid;
+  return `<svg viewBox="0 0 400 300" role="img" aria-label="Illustration of ${esc(n)}"><defs>
+    <linearGradient id="b${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${l}"/><stop offset="1" stop-color="${b}"/></linearGradient>
+    <linearGradient id="s${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="#0a0a14"/></linearGradient></defs>
+    ${shape(kind(n), `url(#b${u})`, `url(#s${u})`, a)}</svg>`;
+};
+/* Product photos live in public/img/<name>.jpg. If one is missing, the drawn illustration is used instead. */
+const slug = n => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const pic = n => `<img src="img/${slug(n)}.jpg" alt="${esc(n)}" data-n="${esc(n)}">`;
+document.addEventListener('error', e => { const i = e.target; if (i.tagName === 'IMG' && i.dataset.n) i.outerHTML = art(i.dataset.n.replace(/&amp;/g, '&')); }, true);
+const FAM = { iPhone: 'Fast, bright and made for every day.', Mac: 'Serious power for serious work.', iPad: 'A canvas that goes wherever you do.', Watch: 'Your day, right on your wrist.', AirPods: 'Sound that stays out of your way.', Home: 'Fill the room with sound.' };
+const tag = f => FAM[f] || 'Made to be used every day.';
+const stockTag = p => p.stock === 0 ? '<span class="mute">Sold out</span>' : p.stock <= 3 ? `<span class="low">Only ${p.stock} left</span>` : `<span class="mute">${p.stock} in stock</span>`;
 const toast = m => { const t = $('#toast'); t.textContent = m; t.style.display = 'block'; clearTimeout(toast.h); toast.h = setTimeout(() => t.style.display = 'none', 2500); };
 
 async function api(path, o = {}) {
@@ -99,10 +112,10 @@ async function api(path, o = {}) {
   return j;
 }
 
-const card = (p, d) => `<article class="card"><a class="art" href="#/product/${p.id}" aria-label="View ${esc(p.name)}">${art(p.name)}</a><div class="info">
-  <h3><a href="#/product/${p.id}">${esc(p.name)}</a></h3><p class="muted">by ${esc(p.artisan)}</p>
-  <div class="row"><b>${money(p.price_cents)}</b>${stockTag(p)}</div>
-  <button data-add="${p.id}" ${live(d) && p.stock > 0 ? '' : 'disabled'}>${p.stock === 0 ? 'Sold out' : live(d) ? 'Add to cart' : 'Not open yet'}</button></div></article>`;
+const buy = (p, d) => p.stock === 0 ? '<span class="btn off">Sold out</span>' : live(d) ? `<button class="btn" data-add="${p.id}">Buy</button>` : `<span class="btn off">Opens ${dshort(d)}</span>`;
+const tile = (p, d, cls) => `<section class="tile ${cls}"><h2>${esc(p.name)}</h2><p class="tag">${tag(p.artisan)}</p><p class="from">From ${money(p.price_cents)}</p>
+  <p class="cta">${buy(p, d)}<a class="lnk" href="#/product/${p.id}">Learn more &#8250;</a></p>
+  <a class="stage" href="#/product/${p.id}" aria-label="View ${esc(p.name)}">${pic(p.name)}</a></section>`;
 
 function countdown() {
   const el = $('#cd'); if (!el) return;
@@ -118,38 +131,36 @@ function countdown() {
 async function home() {
   const drops = await api('/drops');
   const next = drops.filter(d => !live(d)).sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at))[0];
-  app.innerHTML = `<section class="hero"><div>
-      <h1>Handmade ceramics and textiles, every Saturday at 7 pm</h1>
-      <p class="lede">Small batches from our artisans. When a piece is gone, it is gone.</p>
-      ${next ? `<p class="cd-label">${esc(next.name)} opens in</p><p class="cd" id="cd" data-t="${next.starts_at}"></p>` : '<p class="cd-label">A drop is open now. Choose your pieces below.</p>'}
-    </div><div class="shelf">${hero()}</div></section>
-    <h2>Drop calendar</h2>
-    <ol class="cal">${[...drops].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)).map(d => `<li class="${live(d) ? 'on' : ''}"><span class="date">${when(d)}</span><span class="dn">${esc(d.name)}</span><span class="st">${rel(d)}</span><span class="muted">${d.products.length} pieces</span></li>`).join('')}</ol>
-    ${drops.map(d => `<section><h2>${esc(d.name)}</h2><p class="muted">${live(d) ? 'Open now' : 'Opens ' + when(d)}</p><div class="grid">${d.products.map(p => card(p, d)).join('')}</div></section>`).join('') || '<p>No drops yet. Run the import to add some.</p>'}`;
+  const items = drops.flatMap(d => d.products.map(p => ({ p, d }))).sort((a, b) => live(b.d) - live(a.d));
+  const rest = items.slice(2);
+  app.innerHTML = `${next ? `<div class="strip">${esc(next.name)} opens in <b id="cd" data-t="${next.starts_at}"></b></div>` : ''}
+    ${items.slice(0, 2).map((x, i) => tile(x.p, x.d, i ? '' : 'w')).join('')}
+    <div class="duo">${rest.map((x, i) => tile(x.p, x.d, (i + (i >> 1)) % 2 ? 'w' : '')).join('')}</div>
+    <section class="cal"><h2 class="sec">Launch calendar</h2><ol>${[...drops].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)).map(d => `<li><span class="dn">${esc(d.name)}</span><span class="mute">${dlong(d)}</span><span class="${live(d) ? 'on-t' : 'mute'}">${live(d) ? 'Open now' : d.products.length + ' products'}</span></li>`).join('')}</ol></section>`;
+  if (!items.length) app.innerHTML = '<div class="page"><p>No launches yet.</p></div>';
   countdown();
 }
 
 async function product(id) {
   const drops = await api('/drops');
   const d = drops.find(x => x.products.some(p => p.id == id));
-  if (!d) { app.innerHTML = '<p class="err">We could not find that piece.</p><p><a href="#/">Back to the drops</a></p>'; return; }
+  if (!d) { app.innerHTML = '<div class="page"><p class="err">We could not find that product.</p><p><a href="#/">Back to the store</a></p></div>'; return; }
   const p = d.products.find(x => x.id == id);
-  app.innerHTML = `<p style="margin-top:1.5rem"><a href="#/">Back to the drops</a></p><div class="pdp">
-    <div class="art">${art(p.name)}</div>
-    <div><p class="muted">${esc(d.name)}</p><h1>${esc(p.name)}</h1><p class="muted">Made by ${esc(p.artisan)}</p>
-    <p class="price">${money(p.price_cents)}</p><p>${stockTag(p)}</p>
-    <p class="desc">${blurb(p.name)}</p>
-    <button data-add="${p.id}" ${live(d) && p.stock > 0 ? '' : 'disabled'}>${p.stock === 0 ? 'Sold out' : live(d) ? 'Add to cart' : 'Opens ' + when(d)}</button>
-    <p class="muted small">Items stay in your cart for 10 minutes.</p></div></div>`;
+  app.innerHTML = `<div class="page"><p><a class="lnk" href="#/">&#8249; Store</a></p><div class="pdp">
+    <div class="box">${pic(p.name)}</div>
+    <div><p class="mute" style="margin:0">${esc(p.artisan)}, ${esc(d.name)}</p><h1>${esc(p.name)}</h1><p class="tag">${tag(p.artisan)}</p>
+    <p class="price">${money(p.price_cents)}</p><p style="margin:0 0 1.2rem">${stockTag(p)}</p>
+    ${p.stock === 0 ? '<span class="btn off">Sold out</span>' : live(d) ? `<button class="btn" data-add="${p.id}">Add to Bag</button>` : `<span class="btn off">Opens ${dlong(d)}</span>`}
+    <p class="mute" style="font-size:14px;margin-top:1rem">Items stay in your bag for 10 minutes.</p></div></div></div>`;
 }
 
 async function cart() {
   const c = await api('/cart/' + cartId);
-  if (!c.items.length) { app.innerHTML = '<h2>Your cart</h2><p>Your cart is empty. Items you add are held for 10 minutes.</p><p><a href="#/">Browse the drops</a></p>'; return; }
-  app.innerHTML = `<h2>Your cart</h2><p class="muted">Held for you: <b id="t"></b></p>
+  if (!c.items.length) { app.innerHTML = '<div class="page"><h2 class="sec">Your Bag is empty.</h2><p class="mute">Items you add are held for 10 minutes.</p><p><a class="lnk" href="#/">Continue shopping &#8250;</a></p></div>'; return; }
+  app.innerHTML = `<div class="page"><h2 class="sec">Review your Bag</h2><p class="mute">Held for you: <b id="t"></b></p>
     <table><tr><th>Item<th>Qty<th>Price</tr>${c.items.map(i => `<tr><td>${esc(i.name)}<td>${i.qty}<td>${money(i.price_cents * i.qty)}</tr>`).join('')}</table>
     <p><b>Total ${money(c.total_cents)}</b></p>
-    <form id="f"><input name="name" placeholder="Full name" aria-label="Full name" required><input name="email" type="email" placeholder="Email" aria-label="Email" required><button>Place order</button></form>`;
+    <form id="f"><input name="name" placeholder="Full name" aria-label="Full name" required><input name="email" type="email" placeholder="Email" aria-label="Email" required><button class="btn">Place order</button></form></div>`;
   const end = new Date(c.items.map(i => i.expires_at).sort()[0]);
   timer = setInterval(() => {
     const el = $('#t'); if (!el) return clearInterval(timer);
@@ -166,17 +177,17 @@ async function cart() {
 
 async function order(id) {
   const o = await api('/orders/' + id);
-  app.innerHTML = `<h2>Order #${o.id}</h2><p>Thank you, ${esc(o.name)}. Status: <b>${esc(o.status)}</b></p>
-    <table>${o.items.map(i => `<tr><td>${i.qty} x ${esc(i.name)}<td>${money(i.price_cents * i.qty)}</tr>`).join('')}</table><p><b>Total ${money(o.total_cents)}</b></p>`;
+  app.innerHTML = `<div class="page"><h2 class="sec">Thank you, ${esc(o.name)}.</h2><p>Order #${o.id}. Status: <b>${esc(o.status)}</b></p>
+    <table>${o.items.map(i => `<tr><td>${i.qty} x ${esc(i.name)}<td>${money(i.price_cents * i.qty)}</tr>`).join('')}</table><p><b>Total ${money(o.total_cents)}</b></p></div>`;
 }
 
 async function admin() {
   if (!sessionStorage.k) sessionStorage.k = prompt('Admin key') || '';
   const s = await api('/admin/summary');
-  app.innerHTML = `<h2>Revenue per drop</h2>
-    <table><tr><th>Drop<th>Units<th>Revenue<th>Est. running cost<th>Est. profit</tr>${s.drops.map(d => `<tr><td>${esc(d.name)}<td>${d.units}<td>${money(d.revenue_cents)}<td>${money(s.cost_per_drop_cents)}<td>${money(d.revenue_cents - s.cost_per_drop_cents)}</tr>`).join('')}</table>
-    <h2>Stock</h2><table><tr><th>Item<th>Drop<th>In stock</tr>${s.products.map(p => `<tr><td>${esc(p.name)}<td>${esc(p.drop)}<td><input type="number" min="0" value="${p.stock}" data-stock="${p.id}" aria-label="Stock for ${esc(p.name)}"></tr>`).join('')}</table>
-    <h2>Recent orders</h2><table><tr><th>Order<th>Customer<th>Total<th>Status</tr>${s.orders.map(o => `<tr><td>#${o.id}<td>${esc(o.email)}<td>${money(o.total_cents)}<td><select data-status="${o.id}" aria-label="Status for order ${o.id}">${['confirmed', 'packed', 'shipped'].map(x => `<option ${x === o.status ? 'selected' : ''}>${x}`).join('')}</select></tr>`).join('')}</table>`;
+  app.innerHTML = `<div class="page"><h2 class="sec">Revenue per launch</h2>
+    <table><tr><th>Launch<th>Units<th>Revenue<th>Est. running cost<th>Est. profit</tr>${s.drops.map(d => `<tr><td>${esc(d.name)}<td>${d.units}<td>${money(d.revenue_cents)}<td>${money(s.cost_per_drop_cents)}<td>${money(d.revenue_cents - s.cost_per_drop_cents)}</tr>`).join('')}</table>
+    <h2 class="sec">Stock</h2><table><tr><th>Item<th>Launch<th>In stock</tr>${s.products.map(p => `<tr><td>${esc(p.name)}<td>${esc(p.drop)}<td><input type="number" min="0" value="${p.stock}" data-stock="${p.id}" aria-label="Stock for ${esc(p.name)}"></tr>`).join('')}</table>
+    <h2 class="sec">Recent orders</h2><table><tr><th>Order<th>Customer<th>Total<th>Status</tr>${s.orders.map(o => `<tr><td>#${o.id}<td>${esc(o.email)}<td>${money(o.total_cents)}<td><select data-status="${o.id}" aria-label="Status for order ${o.id}">${['confirmed', 'packed', 'shipped'].map(x => `<option ${x === o.status ? 'selected' : ''}>${x}`).join('')}</select></tr>`).join('')}</table></div>`;
 }
 
 const routes = { '': home, product, cart, order, admin };
@@ -184,7 +195,7 @@ async function route() {
   const [, p = '', arg] = location.hash.split('/');
   clearInterval(timer);
   try { await (routes[p] || home)(arg); }
-  catch (e) { if (/admin key/.test(e.message)) delete sessionStorage.k; app.innerHTML = `<p class="err">${esc(e.message)}</p>`; }
+  catch (e) { if (/admin key/.test(e.message)) delete sessionStorage.k; app.innerHTML = `<div class="page"><p class="err">${esc(e.message)}</p></div>`; }
   api('/cart/' + cartId).then(c => $('#n').textContent = c.items.reduce((n, i) => n + i.qty, 0)).catch(() => {});
 }
 addEventListener('hashchange', () => { route(); scrollTo(0, 0); });
@@ -192,7 +203,7 @@ route();
 
 document.addEventListener('click', async e => {
   const id = e.target.dataset.add; if (!id) return;
-  try { await api(`/cart/${cartId}/add`, { method: 'POST', body: { productId: +id } }); toast('Added to your cart. We hold it for 10 minutes.'); }
+  try { await api(`/cart/${cartId}/add`, { method: 'POST', body: { productId: +id } }); toast('Added to your Bag. We hold it for 10 minutes.'); }
   catch (err) { toast(err.message); }
   route();
 });
