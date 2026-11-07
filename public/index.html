@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Drop Store">
 <title>Drop Store: limited launches, one at a time</title>
 <style>
 :root{--alt:#f5f5f7;--ink:#1d1d1f;--mute:#6e6e73;--blue:#0071e3;--link:#0066cc;--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif}
@@ -57,15 +64,141 @@ input[type=number]{width:5.5rem}
 .err{color:#d70015;font-weight:600}
 #toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);background:#1d1d1f;color:#fff;padding:.7rem 1.3rem;border-radius:980px;display:none;z-index:9;font-size:15px}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #0071e3;outline-offset:3px}
-@media (max-width:800px){.duo,.pdp{grid-template-columns:1fr}.duo .tile{min-height:0}.cal li{grid-template-columns:1fr auto}.cal li .mute:last-child{display:none}}
+.cats{display:flex;gap:clamp(.9rem,2.2vw,1.8rem);margin:0 auto}
+.acct{display:flex;gap:1.2rem}
+nav{overflow-x:auto;white-space:nowrap}
+.shop{max-width:70rem;margin:0 auto;padding:clamp(2.5rem,6vw,4.5rem) 1.25rem 0}
+.catgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cat{background:var(--alt);text-decoration:none;text-align:center;padding:1.2rem 1rem 1.1rem;border-radius:18px}
+.cat img,.cat svg{display:block;width:100%;max-width:230px;height:auto;margin:0 auto .5rem;mix-blend-mode:multiply}
+.cat b{display:block;font-size:1.25rem}
+.cat:hover{background:#ebebef}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+.facts h3{margin:0 0 .3rem;font-size:1.15rem}
+.facts p{margin:0;color:var(--mute);font-size:15px}
+details{border-top:1px solid #d2d2d7;padding:.9rem 0}
+details:last-of-type{border-bottom:1px solid #d2d2d7}
+summary{cursor:pointer;font-weight:600}
+details p{margin:.6rem 0 0;color:var(--mute)}
+.fcols{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-bottom:1.5rem}
+.fcols h4{margin:0 0 .4rem;color:var(--ink);font-size:12px;font-weight:600}
+.fcols a{display:block;color:var(--mute);text-decoration:none;padding:.15rem 0}
+.fcols a:hover{text-decoration:underline}
+.getapp{background:var(--alt);margin-top:3rem;padding:clamp(2.5rem,6vw,4rem) 1.25rem}
+.ga-in{max-width:56rem;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:2.5rem;align-items:center}
+.ga-in p{max-width:32rem}
+.cta2{display:flex;gap:.7rem;flex-wrap:wrap;margin:1.2rem 0 .8rem}
+.btn.dk{background:#1d1d1f}
+.btn.dk:hover{background:#000}
+.qr{margin:0;text-align:center}
+.qr svg{display:block;width:176px;height:176px;border-radius:14px}
+.qr figcaption{font-size:13px;color:var(--mute);max-width:176px;margin-top:.6rem;line-height:1.35}
+@media (max-width:800px){.ga-in{grid-template-columns:1fr}.qr{text-align:left}.catgrid{grid-template-columns:repeat(2,1fr)}.facts,.fcols{grid-template-columns:1fr 1fr}.duo,.pdp{grid-template-columns:1fr}.duo .tile{min-height:0}.cal li{grid-template-columns:1fr auto}.cal li .mute:last-child{display:none}}
 </style>
 </head>
 <body>
-<nav><a class="brand" href="#/">Drop Store</a><a href="#/">Store</a><a href="#/cart">Bag (<span id="n">0</span>)</a><a href="#/admin">Admin</a></nav>
+<nav><a class="brand" href="#/">Drop Store</a><span class="cats"><a href="#/">Store</a><a href="#/c/Mac">Mac</a><a href="#/c/iPad">iPad</a><a href="#/c/iPhone">iPhone</a><a href="#/c/Watch">Watch</a><a href="#/c/AirPods">AirPods</a><a href="#/c/Home">Home</a><a href="#/help">Support</a></span><span class="acct"><a href="#/cart">Bag (<span id="n">0</span>)</a><a href="#/admin">Admin</a></span></nav>
 <main id="app"></main>
-<footer>Demo project for a cloud computing course. Not affiliated with or endorsed by Apple Inc. Product names belong to their owners. Prices and descriptions are placeholders, and the product images are illustrations drawn in code.</footer>
+<section class="getapp" id="getapp"><div class="ga-in"><div>
+<h2 class="sec">Take the store with you</h2>
+<p class="mute">Install Drop Store on your phone. It opens full screen like an app, has its own icon, and your Bag is always one tap away.</p>
+<div class="cta2"><button class="btn" id="inst-a">Android: Install app</button><button class="btn dk" id="inst-i">iPhone: Add to Home Screen</button></div>
+<p id="ga-note" class="mute" style="font-size:14px;margin:0" role="status"></p></div>
+<figure class="qr"><div id="qr"></div><figcaption>Scan with your phone camera to open the store on your phone.</figcaption></figure></div></section>
+<footer><div class="fcols">
+<div><h4>Shop and Learn</h4><a href="#/">Store</a><a href="#/c/Mac">Mac</a><a href="#/c/iPad">iPad</a><a href="#/c/iPhone">iPhone</a><a href="#/c/Watch">Watch</a><a href="#/c/AirPods">AirPods</a><a href="#/c/Home">Home</a></div>
+<div><h4>Your account</h4><a href="#/cart">Bag</a><a href="#/help">Check an order</a><a href="#/admin">Admin dashboard</a></div>
+<div><h4>Support</h4><a href="#/help">How launches work</a><a href="#/help">Questions and answers</a></div>
+<div><h4>About this demo</h4><span>Built for a cloud computing course and hosted on Render. Orders are saved in a Postgres database.</span></div></div>
+Demo project. Not affiliated with or endorsed by Apple Inc. Product names belong to their owners. Prices and descriptions are placeholders, no payment is taken, and the product photos are used for this class demo only.</footer>
 <div id="toast" role="status"></div>
 <script>
+/* Minimal QR code generator: byte mode, error correction level M, versions 1 to 10. Returns a square array of booleans. */
+function qrMatrix(text) {
+  const bytes = [...new TextEncoder().encode(text)];
+  const ECC = [0, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26], BLK = [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5];
+  const rawMods = v => { let r = (16 * v + 128) * v + 64; if (v >= 2) { const a = Math.floor(v / 7) + 2; r -= (25 * a - 10) * a - 55; if (v >= 7) r -= 36; } return r; };
+  let ver = 1;
+  for (; ver <= 10; ver++) if (4 + (ver < 10 ? 8 : 16) + 8 * bytes.length <= (Math.floor(rawMods(ver) / 8) - ECC[ver] * BLK[ver]) * 8) break;
+  if (ver > 10) throw new Error('Text too long for QR');
+  const size = ver * 4 + 17, raw = Math.floor(rawMods(ver) / 8), nb = BLK[ver], el = ECC[ver], capBits = (raw - el * nb) * 8;
+  const bits = [], put = (v, n) => { for (let i = n - 1; i >= 0; i--) bits.push((v >>> i) & 1); };
+  put(4, 4); put(bytes.length, ver < 10 ? 8 : 16); bytes.forEach(b => put(b, 8));
+  put(0, Math.min(4, capBits - bits.length)); while (bits.length % 8) bits.push(0);
+  const data = []; for (let i = 0; i < bits.length; i += 8) data.push(parseInt(bits.slice(i, i + 8).join(''), 2));
+  for (let p = 0xEC; data.length < capBits / 8; p ^= 0xEC ^ 0x11) data.push(p);
+  const mul = (x, y) => { let z = 0; for (let i = 7; i >= 0; i--) { z = (z << 1) ^ ((z >>> 7) * 0x11D); z ^= ((y >>> i) & 1) * x; } return z; };
+  const div = new Array(el).fill(0); div[el - 1] = 1;
+  for (let i = 0, root = 1; i < el; i++) { for (let j = 0; j < el; j++) { div[j] = mul(div[j], root); if (j + 1 < el) div[j] ^= div[j + 1]; } root = mul(root, 2); }
+  const short = nb - raw % nb, shortLen = Math.floor(raw / nb), blocks = [];
+  for (let i = 0, k = 0; i < nb; i++) {
+    const dat = data.slice(k, k += shortLen - el + (i < short ? 0 : 1)), r = new Array(el).fill(0);
+    for (const b of dat) { const f = b ^ r.shift(); r.push(0); div.forEach((c, x) => r[x] ^= mul(c, f)); }
+    if (i < short) dat.push(0);
+    blocks.push(dat.concat(r));
+  }
+  const out = [];
+  for (let i = 0; i < blocks[0].length; i++) blocks.forEach((b, j) => { if (i !== shortLen - el || j >= short) out.push(b[i]); });
+  const m = Array.from({ length: size }, () => new Array(size).fill(false)), fn = Array.from({ length: size }, () => new Array(size).fill(false));
+  const set = (x, y, d) => { m[y][x] = d; fn[y][x] = true; };
+  for (let i = 0; i < size; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+  const finder = (x, y) => { for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const d = Math.max(Math.abs(dx), Math.abs(dy)), xx = x + dx, yy = y + dy; if (xx >= 0 && xx < size && yy >= 0 && yy < size) set(xx, yy, d !== 2 && d !== 4); } };
+  finder(3, 3); finder(size - 4, 3); finder(3, size - 4);
+  const na = ver === 1 ? 0 : Math.floor(ver / 7) + 2, step = na ? Math.ceil((ver * 4 + 4) / (na * 2 - 2)) * 2 : 0, pos = [6];
+  for (let p = size - 7; pos.length < na; p -= step) pos.splice(1, 0, p);
+  for (let i = 0; i < na; i++) for (let j = 0; j < na; j++) {
+    if ((i === 0 && j === 0) || (i === 0 && j === na - 1) || (i === na - 1 && j === 0)) continue;
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) set(pos[i] + dx, pos[j] + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1);
+  }
+  const bit = (v, i) => ((v >>> i) & 1) !== 0;
+  const fmt = mask => {
+    const d = (0 << 3) | mask; let r = d; for (let i = 0; i < 10; i++) r = (r << 1) ^ ((r >>> 9) * 0x537);
+    const b = ((d << 10) | r) ^ 0x5412;
+    for (let i = 0; i <= 5; i++) set(8, i, bit(b, i)); set(8, 7, bit(b, 6)); set(8, 8, bit(b, 7)); set(7, 8, bit(b, 8));
+    for (let i = 9; i < 15; i++) set(14 - i, 8, bit(b, i));
+    for (let i = 0; i < 8; i++) set(size - 1 - i, 8, bit(b, i));
+    for (let i = 8; i < 15; i++) set(8, size - 15 + i, bit(b, i));
+    set(8, size - 8, true);
+  };
+  fmt(0);
+  if (ver >= 7) { let r = ver; for (let i = 0; i < 12; i++) r = (r << 1) ^ ((r >>> 11) * 0x1F25); const b = (ver << 12) | r; for (let i = 0; i < 18; i++) { const a = size - 11 + i % 3, c = Math.floor(i / 3); set(a, c, bit(b, i)); set(c, a, bit(b, i)); } }
+  let n = 0;
+  for (let right = size - 1; right >= 1; right -= 2) {
+    if (right === 6) right = 5;
+    for (let v = 0; v < size; v++) for (let j = 0; j < 2; j++) {
+      const x = right - j, y = ((right + 1) & 2) === 0 ? size - 1 - v : v;
+      if (!fn[y][x] && n < out.length * 8) { m[y][x] = bit(out[n >>> 3], 7 - (n & 7)); n++; }
+    }
+  }
+  const MASK = [(x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, (x, y) => x % 3 === 0, (x, y) => (x + y) % 3 === 0, (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0, (x, y) => x * y % 2 + x * y % 3 === 0, (x, y) => (x * y % 2 + x * y % 3) % 2 === 0, (x, y) => ((x + y) % 2 + x * y % 3) % 2 === 0];
+  const pen = g => {
+    let p = 0, dark = 0;
+    const lines = [...g, ...g.map((_, x) => g.map(r => r[x]))];
+    for (const l of lines) {
+      let run = 1;
+      for (let i = 1; i <= size; i++) { if (i < size && l[i] === l[i - 1]) run++; else { if (run >= 5) p += run - 2; run = 1; } }
+      const s = l.map(c => +c).join('');
+      for (const pt of ['10111010000', '00001011101']) for (let i = s.indexOf(pt); i >= 0; i = s.indexOf(pt, i + 1)) p += 40;
+    }
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) { if (g[y][x]) dark++; if (x < size - 1 && y < size - 1 && g[y][x] === g[y][x + 1] && g[y][x] === g[y + 1][x] && g[y][x] === g[y + 1][x + 1]) p += 3; }
+    return p + (Math.ceil(Math.abs(dark * 20 - size * size * 10) / (size * size)) - 1) * 10;
+  };
+  let best = null, bestP = Infinity, bestMask = 0;
+  for (let k = 0; k < 8; k++) {
+    const g = m.map((r, y) => r.map((c, x) => c !== (!fn[y][x] && MASK[k](x, y))));
+    const p = pen(g); if (p < bestP) { bestP = p; best = g; bestMask = k; }
+  }
+  const final = best.map(r => r.slice()), saveM = m.map(r => r.slice());
+  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) m[y][x] = final[y][x];
+  fmt(bestMask);
+  return m;
+}
+function qrSvg(text, dark = '#1d1d1f') {
+  const m = qrMatrix(text), n = m.length + 8; let d = '';
+  m.forEach((r, y) => r.forEach((c, x) => { if (c) d += `M${x + 4} ${y + 4}h1v1h-1z`; }));
+  return `<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges" role="img" aria-label="QR code that opens this store"><rect width="${n}" height="${n}" fill="#fff"/><path d="${d}" fill="${dark}"/></svg>`;
+}
+
 const $ = s => document.querySelector(s), app = $('#app');
 const cartId = localStorage.cartId || (localStorage.cartId = crypto.randomUUID());
 const money = c => '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -100,6 +233,14 @@ const art = n => {
 const slug = n => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const pic = n => `<img src="img/${slug(n)}.jpg" alt="${esc(n)}" data-n="${esc(n)}">`;
 document.addEventListener('error', e => { const i = e.target; if (i.tagName === 'IMG' && i.dataset.n) i.outerHTML = art(i.dataset.n.replace(/&amp;/g, '&')); }, true);
+const FAMS = ['Mac', 'iPad', 'iPhone', 'Watch', 'AirPods', 'Home'];
+const FACTS = `<section class="shop"><h2 class="sec">Shopping, made simple</h2><div class="facts">
+  <div><h3>Held for 10 minutes</h3><p>Add an item to your Bag and it is reserved for you while you check out.</p></div>
+  <div><h3>Never oversold</h3><p>Stock goes down the moment you add an item, so the last unit goes to one person only.</p></div>
+  <div><h3>Timed launches</h3><p>Each launch opens at a set time. The countdown at the top shows the next one.</p></div>
+  <div><h3>Live order status</h3><p>Follow your order from confirmed to packed to shipped on its own page.</p></div></div></section>`;
+const FAQ = [['What is a launch?', 'A launch is a limited release. Its products go on sale at the start time in the launch calendar, in limited numbers.'], ['How long is my Bag held?', 'Every item you add is reserved for 10 minutes. If you do not check out in time, it goes back on sale.'], ['Can an item be oversold?', 'No. Stock is reduced the moment you add an item to your Bag, so two people can never get the last one.'], ['How do I track my order?', 'Enter your order number above. The status moves from confirmed to packed to shipped.'], ['Are these real products and prices?', 'No. This is a student demo. Prices and descriptions are placeholders and no payment is taken.']];
+const catSection = drops => { const all = drops.flatMap(d => d.products); return `<section class="shop"><h2 class="sec">Shop by category</h2><div class="catgrid">${FAMS.map(f => { const ps = all.filter(p => p.artisan === f); return ps.length ? `<a class="cat" href="#/c/${f}">${pic(ps[0].name)}<b>${f}</b><span class="mute">${ps.length} product${ps.length > 1 ? 's' : ''}</span></a>` : ''; }).join('')}</div></section>`; };
 const FAM = { iPhone: 'Fast, bright and made for every day.', Mac: 'Serious power for serious work.', iPad: 'A canvas that goes wherever you do.', Watch: 'Your day, right on your wrist.', AirPods: 'Sound that stays out of your way.', Home: 'Fill the room with sound.' };
 const tag = f => FAM[f] || 'Made to be used every day.';
 const stockTag = p => p.stock === 0 ? '<span class="mute">Sold out</span>' : p.stock <= 3 ? `<span class="low">Only ${p.stock} left</span>` : `<span class="mute">${p.stock} in stock</span>`;
@@ -136,9 +277,24 @@ async function home() {
   app.innerHTML = `${next ? `<div class="strip">${esc(next.name)} opens in <b id="cd" data-t="${next.starts_at}"></b></div>` : ''}
     ${items.slice(0, 2).map((x, i) => tile(x.p, x.d, i ? '' : 'w')).join('')}
     <div class="duo">${rest.map((x, i) => tile(x.p, x.d, (i + (i >> 1)) % 2 ? 'w' : '')).join('')}</div>
-    <section class="cal"><h2 class="sec">Launch calendar</h2><ol>${[...drops].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)).map(d => `<li><span class="dn">${esc(d.name)}</span><span class="mute">${dlong(d)}</span><span class="${live(d) ? 'on-t' : 'mute'}">${live(d) ? 'Open now' : d.products.length + ' products'}</span></li>`).join('')}</ol></section>`;
+    ${catSection(drops)}${FACTS}<section class="cal"><h2 class="sec">Launch calendar</h2><ol>${[...drops].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)).map(d => `<li><span class="dn">${esc(d.name)}</span><span class="mute">${dlong(d)}</span><span class="${live(d) ? 'on-t' : 'mute'}">${live(d) ? 'Open now' : d.products.length + ' products'}</span></li>`).join('')}</ol></section>`;
   if (!items.length) app.innerHTML = '<div class="page"><p>No launches yet.</p></div>';
   countdown();
+}
+
+async function category(f) {
+  f = decodeURIComponent(f || '');
+  const drops = await api('/drops');
+  const items = drops.flatMap(d => d.products.map(p => ({ p, d }))).filter(x => x.p.artisan === f).sort((a, b) => live(b.d) - live(a.d));
+  app.innerHTML = `<div class="page" style="padding-bottom:1rem"><h2 class="sec" style="margin-top:1rem">${esc(f)}</h2><p class="mute">${items.length} product${items.length === 1 ? '' : 's'}. ${esc(tag(f))}</p></div>
+    <div class="duo">${items.map((x, i) => tile(x.p, x.d, i % 2 ? 'w' : '')).join('') || '<div class="page"><p>Nothing here yet.</p></div>'}</div>`;
+}
+
+async function help() {
+  app.innerHTML = `<div class="page"><h2 class="sec">Support</h2><h3>Check your order</h3>
+    <form id="ol"><input name="id" type="number" min="1" placeholder="Order number" aria-label="Order number" required><button class="btn">Check status</button></form>
+    <h3 style="margin-top:2rem">Questions and answers</h3>${FAQ.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`;
+  $('#ol').onsubmit = e => { e.preventDefault(); location.hash = '#/order/' + new FormData(e.target).get('id'); };
 }
 
 async function product(id) {
@@ -190,7 +346,20 @@ async function admin() {
     <h2 class="sec">Recent orders</h2><table><tr><th>Order<th>Customer<th>Total<th>Status</tr>${s.orders.map(o => `<tr><td>#${o.id}<td>${esc(o.email)}<td>${money(o.total_cents)}<td><select data-status="${o.id}" aria-label="Status for order ${o.id}">${['confirmed', 'packed', 'shipped'].map(x => `<option ${x === o.status ? 'selected' : ''}>${x}`).join('')}</select></tr>`).join('')}</table></div>`;
 }
 
-const routes = { '': home, product, cart, order, admin };
+/* Installable app (PWA) and QR code */
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+let installEvt;
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; });
+if (matchMedia('(display-mode: standalone)').matches) $('#getapp').hidden = true;
+$('#qr').innerHTML = qrSvg(location.origin + '/');
+$('#inst-a').onclick = async () => {
+  const n = $('#ga-note');
+  if (installEvt) { installEvt.prompt(); installEvt = null; n.textContent = ''; }
+  else n.textContent = 'On Android, open this page in Chrome, tap the menu (three dots), then choose Install app or Add to Home screen.';
+};
+$('#inst-i').onclick = () => { $('#ga-note').textContent = 'On iPhone or iPad, open this page in Safari, tap the Share button, then choose Add to Home Screen.'; };
+
+const routes = { '': home, c: category, help, product, cart, order, admin };
 async function route() {
   const [, p = '', arg] = location.hash.split('/');
   clearInterval(timer);
