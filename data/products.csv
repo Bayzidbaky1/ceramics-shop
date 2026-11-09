@@ -1,11 +1,20 @@
 drop,name,artisan,price_cents,stock
-Autumn Launch,iPhone 18 Pro,iPhone,109900,5
-Autumn Launch,MacBook Pro,Mac,199900,8
-Autumn Launch,iPad Pro,iPad,99900,10
-Autumn Launch,Apple Watch Series 12,Watch,39900,12
-Autumn Launch,AirPods Pro 3,AirPods,24900,20
-Holiday Launch,iPhone Duo,iPhone,199900,4
-Holiday Launch,iMac,Mac,129900,6
-Holiday Launch,HomePod mini 2,Home,9900,15
-New Year Launch,Apple Watch Ultra 3,Watch,79900,6
-New Year Launch,iPad Air,iPad,59900,10
+Spring Sale,Shiny Dress,Women's Fashion,9550,5
+Spring Sale,Long Dress,Women's Fashion,9550,3
+Spring Sale,Full Sweater,Women's Fashion,9550,2
+Spring Sale,White Dress,Women's Fashion,9550,7
+Spring Sale,Colorful Dress,Women's Fashion,9550,4
+Spring Sale,White Shirt,Women's Fashion,9550,6
+Spring Sale,Black Off-Shoulder Dress,Discount Deals,8900,8
+Spring Sale,Denim Crop Set,Discount Deals,7900,6
+Spring Sale,Long-sleeve Coat,Discount Deals,10600,5
+Spring Sale,Denim Jacket,Women's Fashion,3900,9
+Spring Sale,Peaky Blinders,Women's Fashion,10000,10
+Spring Sale,Rounded Red Hat,Women Accessories,800,15
+Spring Sale,Boxy Denim Hat,Women Accessories,2500,12
+Spring Sale,Linen-blend Shirt,Women's Fashion,1700,0
+Summer Collection,Linen Plain Top,Women's Fashion,2500,10
+Summer Collection,Oversized T-shirt,Women's Fashion,1100,14
+Summer Collection,Polarised Sunglasses,Women Accessories,1800,20
+New Year Collection,Rockstar Jacket,Women's Fashion,2100,8
+New Year Collection,Dotted Black Dress,Women's Fashion,2200,9
