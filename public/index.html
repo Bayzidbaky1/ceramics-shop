@@ -177,6 +177,19 @@ footer{padding:36px 20px 30px}
 .float button{background:#fff;color:#000;border:1px solid #000;border-radius:50%}
 .float svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#000;color:#fff;padding:12px 22px;border-radius:8px;display:none;z-index:50;font-size:13px}
+.authf label{display:block;font-size:12px;color:#555;margin-bottom:12px}
+.authf label input,.authf label select{margin:4px 0 0}
+.authf select{width:100%;padding:13px 14px;border:1px solid #d6d6d6;border-radius:6px;font:inherit;background:#fff}
+.authf input[type=file]{padding:9px}
+#auth{display:contents}
+.authf{max-width:420px;margin:0 auto 60px}
+.authf input{width:100%;padding:13px 14px;border:1px solid #d6d6d6;border-radius:6px;margin-bottom:12px;font:inherit}
+.ord{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.ordh{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:baseline;margin-bottom:10px;font-size:13px}
+.ord .item{margin:8px 0}
+.pay{display:flex;flex-wrap:wrap;gap:8px 24px;margin:4px 0 14px}
+.pay label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.coL input[type=radio]{width:auto;margin:0}
 @media (max-width:900px){
 .bar{gap:16px;height:70px}.bar nav{gap:14px;font-size:12px}.bar nav .hide{display:none}
 .hero{grid-template-columns:1fr}.ht{display:none}.hc,.hc img{height:auto}.hc img{height:120px}.hx{padding:20px 0}
@@ -188,7 +201,7 @@ footer{padding:36px 20px 30px}
 </style>
 </head>
 <body>
-<header><div class="wrap bar"><a class="logo" href="#/">FASCO</a><nav><a href="#/">Home</a><a href="#/shop">Shop</a><a class="hide" href="#/shop">New Arrivals</a><a href="#/help">Support</a><a class="hide" href="#/admin">Admin</a><a class="btn" href="#/cart" style="padding:10px 22px">Cart (<span id="n">0</span>)</a></nav></div></header>
+<header><div class="wrap bar"><a class="logo" href="#/">FASCO</a><nav><a class="hide" href="#/">Home</a><a href="#/shop">Shop</a><a class="hide" href="#/shop">New Arrivals</a><a href="#/help">Support</a><span id="auth"></span><a class="hide" href="#/admin">Admin</a><a class="btn" href="#/cart" style="padding:10px 22px">Cart (<span id="n">0</span>)</a></nav></div></header>
 <main id="app"></main>
 <section class="news"><img src="img/news-left.jpg" alt="Model in a mustard coat"><div class="ncard"><h2>Subscribe To Our Newsletter</h2><p>Hear about new drops, sales and restocks before everyone else.</p><input id="nm" type="email" placeholder="michael@ymail.com" aria-label="Email address"><button class="btn" id="nb">Subscribe Now</button></div><img src="img/news-right.jpg" alt="Model in a grey oversized blazer"></section>
 <section class="getapp" id="getapp"><div class="ga-in"><div>
@@ -289,7 +302,10 @@ function qrSvg(text, dark = '#1d1d1f') {
 }
 
 const $ = s => document.querySelector(s), app = $('#app');
-const cartId = localStorage.cartId || (localStorage.cartId = crypto.randomUUID());
+const guestId = localStorage.cartId || (localStorage.cartId = crypto.randomUUID());
+let ME = null, cartId = guestId;
+const setMe = u => { ME = u; cartId = u ? 'u-' + u.id : guestId; };
+const renderAuth = () => { $('#auth').innerHTML = ME ? `<a href="#/account">Hi, ${esc(ME.name.split(' ')[0])}</a>` : '<a href="#/login">Sign in</a><a class="btn alt" href="#/signup" style="padding:10px 20px">Sign Up</a>'; };
 const money = c => '$' + (c / 100).toFixed(2);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const live = d => new Date(d.starts_at) <= new Date();
@@ -398,7 +414,7 @@ async function cart() {
   if (!c.items.length) { app.innerHTML = `<div class="wrap">${title}<p style="text-align:center">Your cart is empty. Items you add are held for 10 minutes.</p><p style="text-align:center"><a class="btn" href="#/shop">Continue shopping</a></p></div>`; return; }
   app.innerHTML = `<div class="wrap">${title}<p class="mut" style="text-align:center;margin-top:-18px">Held for you: <b id="t"></b></p>
     <table><tr><th>Product<th>Price<th>Quantity<th style="text-align:right">Total</tr>${c.items.map(i => `<tr><td><div class="item">${img(i.name)}<b>${esc(i.name)}</b></div><td>${money(i.price_cents)}<td>${i.qty}<td style="text-align:right">${money(i.price_cents * i.qty)}</tr>`).join('')}</table>
-    <div class="tot"><p><b>Subtotal</b><b>${money(c.total_cents)}</b></p><p class="mut" style="font-size:12px;justify-content:flex-end">Taxes and shipping are not charged in this demo.</p><a class="btn wide" href="#/checkout">Checkout</a></div></div>`;
+    ${ME ? '' : '<p class="mut" style="text-align:center;font-size:12px">Have an account? <a href="#/login" data-after="#/cart">Sign in</a> to keep your cart and see your orders.</p>'}<div class="tot"><p><b>Subtotal</b><b>${money(c.total_cents)}</b></p><p class="mut" style="font-size:12px;justify-content:flex-end">Taxes and shipping are not charged in this demo.</p><a class="btn wide" href="#/checkout">Checkout</a></div></div>`;
   holdTimer(c);
 }
 function holdTimer(c) {
@@ -410,21 +426,84 @@ function holdTimer(c) {
     if (!s) { clearInterval(timer); route(); }
   }, 500);
 }
+const payTxt = o => o.payment_method === 'card' ? `Paid with ${esc(o.card_brand || 'card')} ending ${esc(o.card_last4 || '')} (test payment)` : o.payment_method === 'cod' ? 'Payment: pay on delivery' : 'Payment: not recorded';
+/* Demo payments accept test cards only. The card number never leaves the browser: only the brand and last 4 digits are sent. */
+const TEST_CARDS = ['4242424242424242', '5555555555554444', '378282246310005', '4000056655665556'];
+const luhn = n => { let s = 0, d = false; for (let i = n.length - 1; i >= 0; i--) { let x = +n[i]; if (d) { x *= 2; if (x > 9) x -= 9; } s += x; d = !d; } return n.length >= 13 && s % 10 === 0; };
+const brandOf = n => /^4/.test(n) ? 'Visa' : /^(5[1-5]|2[2-7])/.test(n) ? 'Mastercard' : /^3[47]/.test(n) ? 'American Express' : '';
 async function checkout() {
   const c = await api('/cart/' + cartId); clearInterval(timer);
   if (!c.items.length) { location.hash = '#/cart'; return; }
   app.innerHTML = `<div class="wrap"><h1 class="ttl">FASCO Demo Checkout</h1><p class="crumb">Held for you: <b id="t"></b></p><div class="co">
-    <form id="f" class="coL"><h3>Contact</h3><input name="email" type="email" placeholder="Email address" aria-label="Email address" required>
-    <h3>Delivery</h3><div class="two"><input name="first" placeholder="First Name" aria-label="First name" required><input name="last" placeholder="Last Name" aria-label="Last name" required></div>
-    <h3>Payment</h3><p class="note">No payment is taken in this demo. Your order is saved with your name and email only.</p><button class="btn wide">Place order</button></form>
+    <form id="f" class="coL" novalidate><h3>Contact</h3>
+    ${ME ? `<p class="note">Signed in as <b>${esc(ME.name)}</b> (${esc(ME.email)}). This order will appear in your account.</p>`
+      : `<p class="mut" style="font-size:12px">Have an account? <a href="#/login" data-after="#/checkout">Sign in</a> to keep track of your orders.</p>
+         <input name="email" type="email" placeholder="Email address" aria-label="Email address" autocomplete="email"><div class="two"><input name="first" placeholder="First Name" aria-label="First name" autocomplete="given-name"><input name="last" placeholder="Last Name" aria-label="Last name" autocomplete="family-name"></div>`}
+    <h3>Payment</h3>
+    <div class="pay"><label><input type="radio" name="pm" value="card" checked> Credit card (test mode)</label><label><input type="radio" name="pm" value="cod"> Pay on delivery</label></div>
+    <div id="cardbox"><p class="note">Test mode: use card <b>4242 4242 4242 4242</b>, any future date and any 3-digit code. Real cards are not accepted and nothing is charged.</p>
+      <input id="cn" inputmode="numeric" autocomplete="off" placeholder="Card number" aria-label="Card number" maxlength="19"><input id="cname" autocomplete="off" placeholder="Name on card" aria-label="Name on card">
+      <div class="two"><input id="cx" autocomplete="off" placeholder="MM / YY" aria-label="Expiry date" maxlength="7"><input id="cc" inputmode="numeric" autocomplete="off" placeholder="Security code" aria-label="Security code" maxlength="4"></div></div>
+    <p class="err" id="ferr" role="alert"></p><button class="btn wide">Pay now</button></form>
     <aside class="coR">${c.items.map(i => `<div class="item" style="margin-bottom:12px">${img(i.name)}<div style="flex:1"><b>${esc(i.name)}</b><div class="mut">Qty ${i.qty}</div></div><span>${money(i.price_cents * i.qty)}</span></div>`).join('')}
     <div class="line"><span class="mut">Subtotal</span><span>${money(c.total_cents)}</span></div><div class="line"><span class="mut">Shipping</span><span>Free</span></div><div class="line"><b>Total</b><b>${money(c.total_cents)}</b></div></aside></div></div>`;
   holdTimer(c);
+  document.querySelectorAll('input[name=pm]').forEach(r => r.onchange = () => { $('#cardbox').style.display = r.value === 'card' && r.checked ? '' : 'none'; });
+  $('#cn').oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim(); };
+  $('#cx').oninput = e => { const v = e.target.value.replace(/\D/g, '').slice(0, 4); e.target.value = v.length > 2 ? v.slice(0, 2) + ' / ' + v.slice(2) : v; };
   $('#f').onsubmit = async e => {
-    e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
-    try { const r = await api('/checkout', { method: 'POST', body: { cartId, name: `${f.first} ${f.last}`.trim(), email: f.email } }); location.hash = '#/order/' + r.orderId; }
-    catch (err) { toast(err.message); route(); }
+    e.preventDefault();
+    const fail = m => { $('#ferr').textContent = m; };
+    const f = Object.fromEntries(new FormData(e.target)); fail('');
+    if (!ME) { if (!/^\S+@\S+\.\S+$/.test(f.email || '')) return fail('Enter a valid email address.'); if (!f.first?.trim() || !f.last?.trim()) return fail('Enter your first and last name.'); }
+    let payment = { method: 'cod' };
+    if (f.pm === 'card') {
+      const n = $('#cn').value.replace(/\D/g, ''), [mm, yy] = $('#cx').value.split('/').map(x => x.trim()), now = new Date();
+      if (!TEST_CARDS.includes(n)) { const real = luhn(n); if (real) $('#cn').value = ''; return fail(real ? 'This demo only accepts test cards. Please use 4242 4242 4242 4242.' : 'Enter a valid test card number.'); }
+      if (!$('#cname').value.trim()) return fail('Enter the name on the card.');
+      const m = +mm, y = 2000 + +yy;
+      if (!(m >= 1 && m <= 12) || !(y > now.getFullYear() || (y === now.getFullYear() && m >= now.getMonth() + 1))) return fail('Enter a valid expiry date in the future (MM / YY).');
+      if (!/^\d{3,4}$/.test($('#cc').value)) return fail('Enter the security code.');
+      payment = { method: 'card', brand: brandOf(n), last4: n.slice(-4) };
+      $('#cn').value = ''; $('#cc').value = '';
+    }
+    try {
+      const body = { cartId, payment }; if (!ME) { body.name = `${f.first} ${f.last}`.trim(); body.email = f.email; }
+      const r = await api('/checkout', { method: 'POST', body }); location.hash = '#/order/' + r.orderId;
+    } catch (err) { fail(err.message); }
   };
+}
+
+function authForm(mode) {
+  if (ME) { location.hash = '#/account'; return; }
+  const su = mode === 'signup';
+  app.innerHTML = `<div class="wrap"><h1 class="ttl">${su ? 'Create your account' : 'Sign in'}</h1><p class="crumb"><a href="#/">Home</a> &nbsp;&rsaquo;&nbsp; ${su ? 'Sign Up' : 'Sign In'}</p>
+    <form id="af" class="authf">${su ? '<input name="name" placeholder="Full name" aria-label="Full name" autocomplete="name" required maxlength="80">' : ''}
+    <input name="email" type="email" placeholder="Email address" aria-label="Email address" autocomplete="email" required maxlength="120">
+    <input name="password" type="password" placeholder="Password" aria-label="Password" autocomplete="${su ? 'new-password' : 'current-password'}" required ${su ? 'minlength="8"' : ''} maxlength="200">
+    ${su ? '<p class="mut" style="font-size:12px;margin:0 0 12px">Use at least 8 characters.</p>' : ''}<p class="err" id="aerr" role="alert"></p>
+    <button class="btn wide">${su ? 'Create account' : 'Sign in'}</button>
+    <p class="mut" style="text-align:center;margin-top:14px">${su ? 'Already have an account? <a href="#/login">Sign in</a>' : 'New here? <a href="#/signup">Create an account</a>'}</p></form></div>`;
+  $('#af').onsubmit = async e => {
+    e.preventDefault();
+    try {
+      const r = await api('/auth/' + (su ? 'signup' : 'login'), { method: 'POST', body: { ...Object.fromEntries(new FormData(e.target)), cartId: guestId } });
+      setMe(r.user); renderAuth(); toast(su ? 'Welcome! Your account is ready.' : 'Welcome back!');
+      const go = sessionStorage.after || '#/account'; delete sessionStorage.after; location.hash = go; if (location.hash === go) route();
+    } catch (err) { $('#aerr').textContent = err.message; }
+  };
+}
+const login = () => authForm('login'), signup = () => authForm('signup');
+
+async function account() {
+  if (!ME) { sessionStorage.after = '#/account'; location.hash = '#/login'; return; }
+  const [orders, c] = await Promise.all([api('/me/orders'), api('/cart/' + cartId)]);
+  app.innerHTML = `<div class="wrap"><h1 class="ttl">My Account</h1><p class="crumb">Signed in as ${esc(ME.name)} (${esc(ME.email)})</p>
+    <h2 class="sec2">My cart</h2>${c.items.length ? `<table><tr><th>Product<th>Quantity<th style="text-align:right">Total</tr>${c.items.map(i => `<tr><td><div class="item">${img(i.name)}<b>${esc(i.name)}</b></div><td>${i.qty}<td style="text-align:right">${money(i.price_cents * i.qty)}</tr>`).join('')}</table><a class="btn" href="#/cart">Go to cart</a>` : '<p class="mut">Your cart is empty. Items you add are held for 10 minutes.</p>'}
+    <h2 class="sec2">My orders</h2>${orders.length ? orders.map(o => `<div class="ord"><div class="ordh"><b>Order #${o.id}</b><span class="mut">${esc(new Date(o.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }))}</span><span>Status: ${esc(o.status)}</span><span>${payTxt(o)}</span><b>${money(o.total_cents)}</b></div>
+      ${o.items.map(i => `<div class="item">${img(i.name)}<div style="flex:1"><b>${esc(i.name)}</b><div class="mut">Qty ${i.qty}</div></div><span>${money(i.price_cents * i.qty)}</span></div>`).join('')}</div>`).join('') : '<p class="mut">You have not placed any orders yet.</p>'}
+    <p style="margin-top:30px"><button class="btn alt" id="so">Sign out</button></p></div>`;
+  $('#so').onclick = async () => { try { await api('/auth/logout', { method: 'POST' }); } catch { } setMe(null); renderAuth(); toast('You are signed out.'); location.hash = '#/'; };
 }
 
 const FAQ = [['What is a launch?', 'A launch is a limited release. Its products go on sale at the start time in the launch calendar, in limited numbers.'], ['How long is my Bag held?', 'Every item you add is reserved for 10 minutes. If you do not check out in time, it goes back on sale.'], ['Can an item be oversold?', 'No. Stock is reduced the moment you add an item to your Bag, so two people can never get the last one.'], ['How do I track my order?', 'Enter your order number above. The status moves from confirmed to packed to shipped.'], ['Are these real products and prices?', 'No. This is a student demo. Prices and descriptions are placeholders and no payment is taken.']];
@@ -437,17 +516,61 @@ async function help() {
 
 async function order(id) {
   const o = await api('/orders/' + id);
-  app.innerHTML = `<div class="page"><h2 class="sec2">Thank you, ${esc(o.name)}.</h2><p>Order #${o.id}. Status: <b>${esc(o.status)}</b></p>
+  app.innerHTML = `<div class="page"><h2 class="sec2">Thank you, ${esc(o.name)}.</h2><p>Order #${o.id}. Status: <b>${esc(o.status)}</b></p><p>${payTxt(o)}</p>
     <table>${o.items.map(i => `<tr><td>${i.qty} x ${esc(i.name)}<td>${money(i.price_cents * i.qty)}</tr>`).join('')}</table><p><b>Total ${money(o.total_cents)}</b></p></div>`;
 }
 
+/* Photos are shrunk in the browser before upload (max 900 px, JPEG). */
+async function prepImage(file) {
+  if (!file || !/^image\//.test(file.type)) throw new Error('Choose an image file.');
+  const bmp = await createImageBitmap(file), k = Math.min(1, 900 / Math.max(bmp.width, bmp.height)), c = document.createElement('canvas');
+  c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.85);
+}
 async function admin() {
   if (!sessionStorage.k) sessionStorage.k = prompt('Admin key') || '';
   const s = await api('/admin/summary');
-  app.innerHTML = `<div class="page"><h2 class="sec2">Revenue per launch</h2>
+  const cats = [...new Set(s.products.map(p => p.category))], dropOpts = [...s.drops].sort((a, b) => new Date(b.starts_at) - new Date(a.starts_at)).map(d => `<option value="${d.id}">${esc(d.name)} (${esc(dshort(d))})</option>`).join('');
+  app.innerHTML = `<div class="page"><h1 class="ttl" style="padding-top:0">Admin</h1>
+    <h2 class="sec2">Add a product</h2>
+    <form id="np" class="authf" style="max-width:640px;margin:0 0 20px">
+      <label>Product title<input name="name" required maxlength="100" placeholder="e.g. Linen Summer Dress"></label>
+      <label>Category<input name="category" list="cats" required maxlength="60" placeholder="Pick one or type a new category"></label><datalist id="cats">${cats.map(c => `<option value="${esc(c)}">`).join('')}</datalist>
+      <div class="two"><label>Price (USD)<input name="price" type="number" min="0.01" step="0.01" required placeholder="29.90"></label><label>Stock<input name="stock" type="number" min="0" step="1" value="10" required></label></div>
+      <label>Launch (drop)<select name="drop_id" required>${dropOpts}</select></label>
+      <label>Product image<input id="npimg" type="file" accept="image/*" required></label><img id="pv" alt="Preview of the new product" style="display:none;max-width:160px;border-radius:8px;margin:0 0 12px">
+      <p class="err" id="nperr" role="alert"></p><button class="btn">Add product</button></form>
+    <details style="max-width:640px;margin-bottom:10px"><summary>Add a launch (drop)</summary>
+      <form id="nd" class="authf" style="margin:12px 0 0;max-width:640px"><label>Launch name<input name="name" required maxlength="80" placeholder="e.g. Winter Collection"></label>
+      <label>Opens at<input name="starts" type="datetime-local" required></label><p class="err" id="nderr" role="alert"></p><button class="btn alt">Add launch</button></form></details>
+    <h2 class="sec2">Revenue per launch</h2>
     <table><tr><th>Launch<th>Units<th>Revenue<th>Est. running cost<th>Est. profit</tr>${s.drops.map(d => `<tr><td>${esc(d.name)}<td>${d.units}<td>${money(d.revenue_cents)}<td>${money(s.cost_per_drop_cents)}<td>${money(d.revenue_cents - s.cost_per_drop_cents)}</tr>`).join('')}</table>
-    <h2 class="sec2">Stock</h2><table><tr><th>Item<th>Launch<th>In stock</tr>${s.products.map(p => `<tr><td>${esc(p.name)}<td>${esc(p.drop)}<td><input type="number" min="0" value="${p.stock}" data-stock="${p.id}" aria-label="Stock for ${esc(p.name)}"></tr>`).join('')}</table>
-    <h2 class="sec2">Recent orders</h2><table><tr><th>Order<th>Customer<th>Total<th>Status</tr>${s.orders.map(o => `<tr><td>#${o.id}<td>${esc(o.email)}<td>${money(o.total_cents)}<td><select data-status="${o.id}" aria-label="Status for order ${o.id}">${['confirmed', 'packed', 'shipped'].map(x => `<option ${x === o.status ? 'selected' : ''}>${x}`).join('')}</select></tr>`).join('')}</table></div>`;
+    <h2 class="sec2">Products and stock</h2><table><tr><th>Item<th>Category<th>Launch<th>Price<th>In stock<th></tr>${s.products.map(p => `<tr><td>${esc(p.name)}<td>${esc(p.category)}<td>${esc(p.drop)}<td>${money(p.price_cents)}<td><input type="number" min="0" value="${p.stock}" data-stock="${p.id}" aria-label="Stock for ${esc(p.name)}"><td><button class="btn alt" data-del="${p.id}" style="padding:6px 12px;font-size:11px;box-shadow:none">Remove</button></tr>`).join('')}</table>
+    <h2 class="sec2">Recent orders</h2><table><tr><th>Order<th>Customer<th>Total<th>Payment<th>Status</tr>${s.orders.map(o => `<tr><td>#${o.id}<td>${esc(o.email)}<td>${money(o.total_cents)}<td>${esc(o.payment_status || 'not recorded')}<td><select data-status="${o.id}" aria-label="Status for order ${o.id}">${['confirmed', 'packed', 'shipped'].map(x => `<option ${x === o.status ? 'selected' : ''}>${x}`).join('')}</select></tr>`).join('')}</table></div>`;
+  let photo = '';
+  $('#npimg').onchange = async e => {
+    const pv = $('#pv'); photo = ''; pv.style.display = 'none'; $('#nperr').textContent = '';
+    try { photo = await prepImage(e.target.files[0]); pv.src = photo; pv.style.display = 'block'; } catch (err) { $('#nperr').textContent = err.message; }
+  };
+  $('#np').onsubmit = async e => {
+    e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)), er = $('#nperr'); er.textContent = '';
+    if (!photo) { er.textContent = 'Add a product image.'; return; }
+    try {
+      const r = await api('/admin/products', { method: 'POST', body: { name: f.name, category: f.category, price: f.price, stock: f.stock, drop_id: f.drop_id, image: photo } });
+      toast('Product added. It is now in the store.'); location.hash = '#/product/' + r.id;
+    } catch (err) { er.textContent = err.message; }
+  };
+  $('#nd').onsubmit = async e => {
+    e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)), er = $('#nderr'); er.textContent = '';
+    try { await api('/admin/drops', { method: 'POST', body: { name: f.name, starts_at: new Date(f.starts).toISOString() } }); toast('Launch added.'); route(); }
+    catch (err) { er.textContent = err.message; }
+  };
+}
+async function delProduct(id) {
+  if (!confirm('Remove this product from the store?')) return;
+  try { await api('/admin/products/' + id, { method: 'DELETE' }); toast('Product removed.'); } catch (err) { toast(err.message); }
+  route();
 }
 
 /* Installable app (PWA) and QR code */
@@ -463,7 +586,7 @@ $('#inst-a').onclick = async () => {
 };
 $('#inst-i').onclick = () => { $('#ga-note').textContent = 'On iPhone or iPad, open this page in Safari, tap the Share button, then choose Add to Home Screen.'; };
 
-const routes = { '': home, shop, product, cart, checkout, order, admin, help };
+const routes = { '': home, shop, product, cart, checkout, order, admin, help, login, signup, account };
 async function route() {
   const [, p = '', arg] = location.hash.split('/');
   clearInterval(timer);
@@ -472,7 +595,7 @@ async function route() {
   api('/cart/' + cartId).then(c => $('#n').textContent = c.items.reduce((n, i) => n + i.qty, 0)).catch(() => {});
 }
 addEventListener('hashchange', () => { route(); scrollTo(0, 0); });
-route();
+api('/auth/me').then(r => setMe(r.user)).catch(() => {}).finally(() => { renderAuth(); route(); });
 
 async function addToCart(id, n = 1) {
   let ok = 0;
@@ -481,9 +604,11 @@ async function addToCart(id, n = 1) {
   route();
 }
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-add],[data-addn],[data-q],[data-rail],[data-tab],[data-fcat],[data-fprice],[data-top]'); if (!t) return;
+  const t = e.target.closest('[data-del],[data-after],[data-add],[data-addn],[data-q],[data-rail],[data-tab],[data-fcat],[data-fprice],[data-top]'); if (!t) return;
   const d = t.dataset;
-  if (d.add) addToCart(d.add);
+  if (d.del) delProduct(d.del);
+  else if (d.after) sessionStorage.after = d.after;
+  else if (d.add) addToCart(d.add);
   else if (d.addn) addToCart(d.addn, +$('#q').textContent);
   else if (d.q) { const q = $('#q'), max = +$('[data-max]').dataset.max; q.textContent = Math.max(1, Math.min(max, +q.textContent + +d.q)); }
   else if (d.rail) $('#rail').scrollBy({ left: d.rail * 290, behavior: 'smooth' });

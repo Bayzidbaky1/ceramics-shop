@@ -5,3 +5,13 @@ CREATE TABLE IF NOT EXISTS orders(id serial PRIMARY KEY, customer_id int NOT NUL
 CREATE TABLE IF NOT EXISTS order_items(order_id int NOT NULL REFERENCES orders(id), product_id int NOT NULL REFERENCES products(id), qty int NOT NULL, price_cents int NOT NULL);
 CREATE TABLE IF NOT EXISTS holds(id serial PRIMARY KEY, cart_id text NOT NULL, product_id int NOT NULL REFERENCES products(id), expires_at timestamptz NOT NULL);
 CREATE INDEX IF NOT EXISTS holds_cart ON holds(cart_id);
+CREATE TABLE IF NOT EXISTS users(id serial PRIMARY KEY, name text NOT NULL, email text UNIQUE NOT NULL, password_hash text NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS sessions(token_hash text PRIMARY KEY, user_id int NOT NULL REFERENCES users(id) ON DELETE CASCADE, expires_at timestamptz NOT NULL);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS user_id int REFERENCES users(id);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method text;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_status text;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS card_brand text;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS card_last4 text;
+CREATE INDEX IF NOT EXISTS orders_user ON orders(user_id);
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image bytea;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_type text;
