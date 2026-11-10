@@ -15,3 +15,5 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS card_last4 text;
 CREATE INDEX IF NOT EXISTS orders_user ON orders(user_id);
 ALTER TABLE products ADD COLUMN IF NOT EXISTS image bytea;
 ALTER TABLE products ADD COLUMN IF NOT EXISTS image_type text;
+CREATE TABLE IF NOT EXISTS categories(name text PRIMARY KEY);
+INSERT INTO categories(name) SELECT DISTINCT artisan FROM products ON CONFLICT DO NOTHING;

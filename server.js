@@ -152,7 +152,8 @@ app.get('/api/admin/summary', admin, wrap(async (q, r) => {
   const orders = await pool.query('SELECT o.id, o.status, o.total_cents, o.created_at, o.payment_status, c.email FROM orders o JOIN customers c ON c.id = o.customer_id ORDER BY o.id DESC LIMIT 20');
   // Estimate only: monthly bill divided by drops per month. Set both on the server.
   const cost = (+process.env.MONTHLY_COST_USD || 86) / (+process.env.DROPS_PER_MONTH || 4);
-  r.json({ drops: drops.rows, products: products.rows, orders: orders.rows, cost_per_drop_cents: Math.round(cost * 100) });
+  const categories = (await pool.query('SELECT c.name, count(p.id)::int AS products FROM (SELECT name FROM categories UNION SELECT artisan FROM products) c LEFT JOIN products p ON p.artisan = c.name GROUP BY c.name ORDER BY c.name')).rows;
+  r.json({ drops: drops.rows, products: products.rows, categories, orders: orders.rows, cost_per_drop_cents: Math.round(cost * 100) });
 }));
 
 app.patch('/api/admin/products/:id', admin, wrap(async (q, r) => {
@@ -186,10 +187,11 @@ app.post('/api/admin/drops', admin, wrap(async (q, r) => {
 }));
 
 app.post('/api/admin/products', admin, wrap(async (q, r) => {
-  const name = String(q.body.name || '').trim().slice(0, 100), category = String(q.body.category || '').trim().slice(0, 60);
+  const name = String(q.body.name || '').trim().slice(0, 100), category0 = catName(q.body.category);
   const price = Math.round(parseFloat(q.body.price) * 100), stock = Number(q.body.stock), dropId = Number(q.body.drop_id);
   if (!A.slugOf(name)) throw httpErr(400, 'Enter a product title with letters or numbers');
-  if (!category) throw httpErr(400, 'Enter a category');
+  if (!category0) throw httpErr(400, 'Enter a category');
+  const category = (await catNames()).find(n => n.toLowerCase() === category0.toLowerCase()) || category0;
   if (!Number.isFinite(price) || price <= 0 || price > 10000000) throw httpErr(400, 'Enter a price above 0');
   if (!Number.isInteger(stock) || stock < 0 || stock > 100000) throw httpErr(400, 'Stock must be a whole number, 0 or more');
   if (!Number.isInteger(dropId)) throw httpErr(400, 'Choose a launch');
@@ -197,6 +199,7 @@ app.post('/api/admin/products', admin, wrap(async (q, r) => {
   if ((await pool.query(`SELECT 1 FROM products WHERE ${SLUG} = $1`, [A.slugOf(name)])).rowCount) throw httpErr(409, 'A product with this title already exists');
   try {
     const x = await pool.query('INSERT INTO products(drop_id, name, artisan, price_cents, stock, image, image_type) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id', [dropId, name, category, price, stock, img.buf, img.type]);
+    await pool.query('INSERT INTO categories(name) VALUES ($1) ON CONFLICT DO NOTHING', [category]);
     r.json({ id: x.rows[0].id });
   } catch (e) { if (e.code === '23503') throw httpErr(400, 'That launch does not exist'); throw e; }
 }));
@@ -209,6 +212,49 @@ app.delete('/api/admin/products/:id', admin, wrap(async (q, r) => {
   r.json({ ok: true });
 }));
 
+// ---- categories (admin) ----
+const catName = v => String(v || '').trim().replace(/\s+/g, ' ').slice(0, 60);
+const catNames = async c => (await (c || pool).query('SELECT name FROM categories UNION SELECT artisan FROM products')).rows.map(x => x.name);
+
+app.post('/api/admin/categories', admin, wrap(async (q, r) => {
+  const name = catName(q.body.name);
+  if (!name) throw httpErr(400, 'Enter a category name');
+  if ((await catNames()).some(n => n.toLowerCase() === name.toLowerCase())) throw httpErr(409, 'This category already exists');
+  await pool.query('INSERT INTO categories(name) VALUES ($1)', [name]);
+  r.json({ ok: true });
+}));
+
+// Rename: products that use the old name move to the new one
+app.patch('/api/admin/categories', admin, wrap(async (q, r) => {
+  const from = String(q.body.from || ''), to = catName(q.body.to);
+  if (!to) throw httpErr(400, 'Enter a category name');
+  await tx(async c => {
+    const all = await catNames(c);
+    if (!all.includes(from)) throw httpErr(404, 'Category not found');
+    if (all.some(n => n !== from && n.toLowerCase() === to.toLowerCase())) throw httpErr(409, 'Another category already has this name');
+    await c.query('INSERT INTO categories(name) VALUES ($1) ON CONFLICT DO NOTHING', [to]);
+    await c.query('UPDATE products SET artisan = $1 WHERE artisan = $2', [to, from]);
+    if (to !== from) await c.query('DELETE FROM categories WHERE name = $1', [from]);
+  });
+  r.json({ ok: true });
+}));
+
+app.post('/api/admin/categories/delete', admin, wrap(async (q, r) => {
+  const name = String(q.body.name || '');
+  const n = (await pool.query('SELECT count(*)::int AS n FROM products WHERE artisan = $1', [name])).rows[0].n;
+  if (n) throw httpErr(409, `${n} product${n > 1 ? 's use' : ' uses'} this category. Move ${n > 1 ? 'them' : 'it'} to another category first.`);
+  await pool.query('DELETE FROM categories WHERE name = $1', [name]);
+  r.json({ ok: true });
+}));
+
+app.patch('/api/admin/products/:id/category', admin, wrap(async (q, r) => {
+  const cat = catName(q.body.category), id = Number(q.params.id);
+  if (!cat || !Number.isInteger(id)) throw httpErr(400, 'Choose a category');
+  if (!(await catNames()).includes(cat)) throw httpErr(400, 'That category does not exist');
+  await pool.query('UPDATE products SET artisan = $1 WHERE id = $2', [cat, id]);
+  r.json({ ok: true });
+}));
+
 app.use((e, q, r, n) => {
   if (!e.status) console.error(e);
   r.status(e.status || 500).json({ error: e.status ? e.message : 'Server error' });
@@ -217,7 +263,7 @@ app.use((e, q, r, n) => {
 init().then(async () => {
   if (process.env.RESET_DATA === '1') {
     console.log('RESET_DATA=1: clearing shop data');
-    await pool.query('TRUNCATE order_items, orders, holds, products, drops, customers RESTART IDENTITY CASCADE');
+    await pool.query('TRUNCATE order_items, orders, holds, products, drops, customers, categories RESTART IDENTITY CASCADE');
   }
   // First start on an empty database: load the sample data from data/*.csv
   const { rows: [{ n }] } = await pool.query('SELECT count(*)::int n FROM drops');

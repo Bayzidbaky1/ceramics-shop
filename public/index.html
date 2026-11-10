@@ -531,7 +531,7 @@ async function prepImage(file) {
 async function admin() {
   if (!sessionStorage.k) sessionStorage.k = prompt('Admin key') || '';
   const s = await api('/admin/summary');
-  const cats = [...new Set(s.products.map(p => p.category))], dropOpts = [...s.drops].sort((a, b) => new Date(b.starts_at) - new Date(a.starts_at)).map(d => `<option value="${d.id}">${esc(d.name)} (${esc(dshort(d))})</option>`).join('');
+  const cats = s.categories.map(c => c.name), dropOpts = [...s.drops].sort((a, b) => new Date(b.starts_at) - new Date(a.starts_at)).map(d => `<option value="${d.id}">${esc(d.name)} (${esc(dshort(d))})</option>`).join('');
   app.innerHTML = `<div class="page"><h1 class="ttl" style="padding-top:0">Admin</h1>
     <h2 class="sec2">Add a product</h2>
     <form id="np" class="authf" style="max-width:640px;margin:0 0 20px">
@@ -544,9 +544,13 @@ async function admin() {
     <details style="max-width:640px;margin-bottom:10px"><summary>Add a launch (drop)</summary>
       <form id="nd" class="authf" style="margin:12px 0 0;max-width:640px"><label>Launch name<input name="name" required maxlength="80" placeholder="e.g. Winter Collection"></label>
       <label>Opens at<input name="starts" type="datetime-local" required></label><p class="err" id="nderr" role="alert"></p><button class="btn alt">Add launch</button></form></details>
+    <h2 class="sec2">Categories</h2>
+    <form id="nc" class="authf" style="max-width:640px;margin:0 0 14px;display:flex;gap:10px"><input name="name" required maxlength="60" placeholder="New category name" aria-label="New category name" style="margin:0"><button class="btn" style="white-space:nowrap">Add category</button></form>
+    <table><tr><th>Category<th>Products<th></tr>${s.categories.map(c => `<tr><td><input value="${esc(c.name)}" data-catold="${esc(c.name)}" maxlength="60" aria-label="Rename category ${esc(c.name)}" style="min-width:230px"><td>${c.products}<td><button class="btn alt" data-delcat="${esc(c.name)}" style="padding:6px 12px;font-size:11px;box-shadow:none">Delete</button></tr>`).join('')}</table>
+    <p class="mut" style="font-size:12px;margin-top:-6px">To rename, change the name and press Enter or click away. Its products move to the new name. A category can only be deleted when it has no products.</p>
     <h2 class="sec2">Revenue per launch</h2>
     <table><tr><th>Launch<th>Units<th>Revenue<th>Est. running cost<th>Est. profit</tr>${s.drops.map(d => `<tr><td>${esc(d.name)}<td>${d.units}<td>${money(d.revenue_cents)}<td>${money(s.cost_per_drop_cents)}<td>${money(d.revenue_cents - s.cost_per_drop_cents)}</tr>`).join('')}</table>
-    <h2 class="sec2">Products and stock</h2><table><tr><th>Item<th>Category<th>Launch<th>Price<th>In stock<th></tr>${s.products.map(p => `<tr><td>${esc(p.name)}<td>${esc(p.category)}<td>${esc(p.drop)}<td>${money(p.price_cents)}<td><input type="number" min="0" value="${p.stock}" data-stock="${p.id}" aria-label="Stock for ${esc(p.name)}"><td><button class="btn alt" data-del="${p.id}" style="padding:6px 12px;font-size:11px;box-shadow:none">Remove</button></tr>`).join('')}</table>
+    <h2 class="sec2">Products and stock</h2><table><tr><th>Item<th>Category<th>Launch<th>Price<th>In stock<th></tr>${s.products.map(p => `<tr><td>${esc(p.name)}<td><select data-pcat="${p.id}" aria-label="Category for ${esc(p.name)}">${cats.map(c => `<option value="${esc(c)}" ${c === p.category ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select><td>${esc(p.drop)}<td>${money(p.price_cents)}<td><input type="number" min="0" value="${p.stock}" data-stock="${p.id}" aria-label="Stock for ${esc(p.name)}"><td><button class="btn alt" data-del="${p.id}" style="padding:6px 12px;font-size:11px;box-shadow:none">Remove</button></tr>`).join('')}</table>
     <h2 class="sec2">Recent orders</h2><table><tr><th>Order<th>Customer<th>Total<th>Payment<th>Status</tr>${s.orders.map(o => `<tr><td>#${o.id}<td>${esc(o.email)}<td>${money(o.total_cents)}<td>${esc(o.payment_status || 'not recorded')}<td><select data-status="${o.id}" aria-label="Status for order ${o.id}">${['confirmed', 'packed', 'shipped'].map(x => `<option ${x === o.status ? 'selected' : ''}>${x}`).join('')}</select></tr>`).join('')}</table></div>`;
   let photo = '';
   $('#npimg').onchange = async e => {
@@ -561,11 +565,20 @@ async function admin() {
       toast('Product added. It is now in the store.'); location.hash = '#/product/' + r.id;
     } catch (err) { er.textContent = err.message; }
   };
+  $('#nc').onsubmit = async e => {
+    e.preventDefault();
+    try { await api('/admin/categories', { method: 'POST', body: { name: new FormData(e.target).get('name') } }); toast('Category added.'); route(); } catch (err) { toast(err.message); }
+  };
   $('#nd').onsubmit = async e => {
     e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)), er = $('#nderr'); er.textContent = '';
     try { await api('/admin/drops', { method: 'POST', body: { name: f.name, starts_at: new Date(f.starts).toISOString() } }); toast('Launch added.'); route(); }
     catch (err) { er.textContent = err.message; }
   };
+}
+async function delCategory(name) {
+  if (!confirm(`Delete the category "${name}"?`)) return;
+  try { await api('/admin/categories/delete', { method: 'POST', body: { name } }); toast('Category deleted.'); } catch (err) { toast(err.message); }
+  route();
 }
 async function delProduct(id) {
   if (!confirm('Remove this product from the store?')) return;
@@ -604,9 +617,10 @@ async function addToCart(id, n = 1) {
   route();
 }
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-del],[data-after],[data-add],[data-addn],[data-q],[data-rail],[data-tab],[data-fcat],[data-fprice],[data-top]'); if (!t) return;
+  const t = e.target.closest('[data-delcat],[data-del],[data-after],[data-add],[data-addn],[data-q],[data-rail],[data-tab],[data-fcat],[data-fprice],[data-top]'); if (!t) return;
   const d = t.dataset;
-  if (d.del) delProduct(d.del);
+  if (d.delcat) delCategory(d.delcat);
+  else if (d.del) delProduct(d.del);
   else if (d.after) sessionStorage.after = d.after;
   else if (d.add) addToCart(d.add);
   else if (d.addn) addToCart(d.addn, +$('#q').textContent);
@@ -620,9 +634,14 @@ document.addEventListener('click', e => {
 document.addEventListener('change', async e => {
   const t = e.target;
   try {
+    if (t.dataset.catold !== undefined) {
+      const to = t.value.trim();
+      if (to && to !== t.dataset.catold) { await api('/admin/categories', { method: 'PATCH', body: { from: t.dataset.catold, to } }); toast('Category renamed.'); route(); } else t.value = t.dataset.catold;
+    }
+    if (t.dataset.pcat) { await api('/admin/products/' + t.dataset.pcat + '/category', { method: 'PATCH', body: { category: t.value } }); toast('Category updated.'); route(); }
     if (t.dataset.stock) await api('/admin/products/' + t.dataset.stock, { method: 'PATCH', body: { stock: +t.value } });
     if (t.dataset.status) await api('/admin/orders/' + t.dataset.status, { method: 'PATCH', body: { status: t.value } });
-  } catch (err) { alert(err.message); }
+  } catch (err) { alert(err.message); if (location.hash === '#/admin') route(); }
 });
 $('#nb').onclick = () => toast('This is a demo, so your email is not saved.');
 </script>
