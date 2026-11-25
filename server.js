@@ -1,6 +1,8 @@
 const express = require('express');
 const { pool, init } = require('./db');
 const app = express();
+// The restore file can be large, so this one route accepts a bigger body (the admin key is checked first).
+app.use('/api/admin/restore', (q, r, n) => q.get('x-admin-key') === (process.env.ADMIN_KEY || 'admin') ? n() : r.status(401).json({ error: 'Wrong admin key' }), express.json({ limit: '30mb' }));
 app.use(express.json({ limit: '2mb' }));
 app.use(express.static('public'));
 
@@ -211,6 +213,15 @@ app.delete('/api/admin/products/:id', admin, wrap(async (q, r) => {
   catch (e) { if (e.code === '23503') throw httpErr(409, 'This product has orders, so it cannot be deleted. Set its stock to 0 instead.'); throw e; }
   r.json({ ok: true });
 }));
+
+// ---- backup and restore (admin) ----
+const { makeBackup, restoreBackup } = require('./backup');
+app.get('/api/admin/backup', admin, wrap(async (q, r) => {
+  const b = await makeBackup(pool);
+  r.set({ 'Content-Disposition': `attachment; filename="fasco-backup-${new Date().toISOString().slice(0, 10)}.json"`, 'Cache-Control': 'no-store' });
+  r.type('application/json').send(JSON.stringify(b));
+}));
+app.post('/api/admin/restore', admin, wrap(async (q, r) => r.json({ restored: await restoreBackup(pool, q.body) })));
 
 // ---- categories (admin) ----
 const catName = v => String(v || '').trim().replace(/\s+/g, ' ').slice(0, 60);
