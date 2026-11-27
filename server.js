@@ -106,9 +106,23 @@ app.post('/api/cart/:cart/add', wrap(async (q, r) => {
   r.json({ ok: true });
 }));
 
+// Take units out of a cart: one at a time, or every unit of a product. The stock goes back on sale straight away.
+app.post('/api/cart/:cart/remove', wrap(async (q, r) => {
+  const productId = q.body.productId, count = q.body.all ? 1000 : 1;
+  if (!Number.isInteger(productId)) throw httpErr(400, 'Invalid product');
+  const removed = await tx(async c => {
+    await releaseExpired(c);
+    const d = await c.query(`DELETE FROM holds WHERE id IN (
+      SELECT id FROM holds WHERE cart_id = $1 AND product_id = $2 AND expires_at > now() ORDER BY expires_at LIMIT $3 FOR UPDATE SKIP LOCKED) RETURNING id`, [q.params.cart, productId, count]);
+    if (d.rowCount) await c.query('UPDATE products SET stock = stock + $1 WHERE id = $2', [d.rowCount, productId]);
+    return d.rowCount;
+  });
+  r.json({ removed });
+}));
+
 app.get('/api/cart/:cart', wrap(async (q, r) => {
   await tx(releaseExpired);
-  const x = await pool.query(`SELECT p.id product_id, p.name, p.price_cents, count(*)::int qty, min(h.expires_at) expires_at
+  const x = await pool.query(`SELECT p.id product_id, p.name, p.price_cents, p.stock, count(*)::int qty, min(h.expires_at) expires_at
     FROM holds h JOIN products p ON p.id = h.product_id WHERE h.cart_id = $1 GROUP BY p.id`, [q.params.cart]);
   r.json({ items: x.rows, total_cents: x.rows.reduce((s, i) => s + i.price_cents * i.qty, 0) });
 }));

@@ -131,6 +131,9 @@ select,input{font:inherit}
 .qty{display:inline-flex;align-items:center;border:1px solid #cfcfcf;border-radius:6px;margin-right:12px}
 .qty button{background:none;border:0;width:34px;height:42px;font-size:18px;cursor:pointer}
 .qty span{min-width:30px;text-align:center}
+.qty button:disabled{opacity:.35;cursor:not-allowed}
+.lk{background:none;border:0;padding:0;color:#7b7b7b;font:inherit;font-size:12px;text-decoration:underline;cursor:pointer}
+.lk:hover{color:#000}
 .pi .row{display:flex;align-items:center;margin:18px 0}
 .pi ul{list-style:none;padding:0;margin:20px 0;font-size:12px;color:#555}
 .pi li{padding:6px 0;border-top:1px solid var(--line)}
@@ -483,12 +486,23 @@ async function product(id) {
 
 async function cart() {
   const c = await api('/cart/' + cartId); clearInterval(timer);
+  setCount(c.items.reduce((n, i) => n + i.qty, 0));
   const title = '<h1 class="ttl">Shopping Cart</h1><p class="crumb"><a href="#/">Home</a> &nbsp;&rsaquo;&nbsp; Your Shopping Cart</p>';
   if (!c.items.length) { app.innerHTML = `<div class="wrap">${title}<p style="text-align:center">Your cart is empty. Items you add are held for 10 minutes.</p><p style="text-align:center"><a class="btn" href="#/shop">Continue shopping</a></p></div>`; return; }
   app.innerHTML = `<div class="wrap">${title}<p class="mut" style="text-align:center;margin-top:-18px">Held for you: <b id="t"></b></p>
-    <table><tr><th>Product<th>Price<th>Quantity<th style="text-align:right">Total</tr>${c.items.map(i => `<tr><td><div class="item">${img(i.name)}<b>${esc(i.name)}</b></div><td>${money(i.price_cents)}<td>${i.qty}<td style="text-align:right">${money(i.price_cents * i.qty)}</tr>`).join('')}</table>
+    <table><tr><th>Product<th>Price<th>Quantity<th style="text-align:right">Total</tr>${c.items.map(i => `<tr><td><div class="item">${img(i.name)}<div><b>${esc(i.name)}</b><br><button class="lk" data-crm="${i.product_id}">Remove</button></div></div><td>${money(i.price_cents)}<td><div class="qty"><button data-cq="-1" data-pid="${i.product_id}" aria-label="Remove one ${esc(i.name)}">&minus;</button><span aria-live="polite">${i.qty}</span><button data-cq="1" data-pid="${i.product_id}" ${i.stock < 1 ? 'disabled title="No more in stock"' : ''} aria-label="Add one ${esc(i.name)}">+</button></div><td style="text-align:right">${money(i.price_cents * i.qty)}</tr>`).join('')}</table>
     ${ME ? '' : '<p class="mut" style="text-align:center;font-size:12px">Have an account? <a href="#/login" data-after="#/cart">Sign in</a> to keep your cart and see your orders.</p>'}<div class="tot"><p><b>Subtotal</b><b>${money(c.total_cents)}</b></p><p class="mut" style="font-size:12px;justify-content:flex-end">Taxes and shipping are not charged in this demo.</p><a class="btn wide" href="#/checkout">Checkout</a></div></div>`;
   holdTimer(c);
+}
+let cartBusy = false;
+// + adds one unit, - takes one away, and "Remove" (delta 0) takes away every unit of that product
+async function cartAct(pid, delta) {
+  if (cartBusy) return; cartBusy = true;
+  try {
+    if (delta > 0) await api(`/cart/${cartId}/add`, { method: 'POST', body: { productId: +pid } });
+    else await api(`/cart/${cartId}/remove`, { method: 'POST', body: { productId: +pid, all: delta === 0 } });
+  } catch (err) { toast(err.message); }
+  cartBusy = false; cart();
 }
 function holdTimer(c) {
   const end = new Date(c.items.map(i => i.expires_at).sort()[0]);
@@ -772,7 +786,7 @@ async function addToCart(id, n = 1, btn) {
   route();
 }
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-delcat],[data-del],[data-after],[data-add],[data-addn],[data-q],[data-rail],[data-tab],[data-fcat],[data-fprice],[data-top]'); if (!t) return;
+  const t = e.target.closest('[data-cq],[data-crm],[data-delcat],[data-del],[data-after],[data-add],[data-addn],[data-q],[data-rail],[data-tab],[data-fcat],[data-fprice],[data-top]'); if (!t) return;
   const d = t.dataset;
   if (d.delcat) delCategory(d.delcat);
   else if (d.del) delProduct(d.del);
@@ -780,6 +794,8 @@ document.addEventListener('click', e => {
   else if (d.add) addToCart(d.add, 1, t);
   else if (d.addn) addToCart(d.addn, +$('#q').textContent, t);
   else if (d.q) { const q = $('#q'), max = +$('[data-max]').dataset.max; q.textContent = Math.max(1, Math.min(max, +q.textContent + +d.q)); }
+  else if (d.cq) cartAct(d.pid, +d.cq);
+  else if (d.crm) cartAct(d.crm, 0);
   else if (d.rail) $('#rail').scrollBy({ left: d.rail * 290, behavior: 'smooth' });
   else if (d.tab !== undefined) { ARR = d.tab; renderArr(); swap('#arr .cards'); }
   else if (d.fcat !== undefined) { F.cat = d.fcat; renderShop(); swap('#shopbody .cards'); }
